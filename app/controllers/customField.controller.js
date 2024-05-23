@@ -11,8 +11,6 @@ exports.create = async(req, res) => {
     const customField = {
         name: req.body.name,
         type: req.body.type,
-        required: req.body.required,
-        identifier: req.body.identifier,
     };
     try{
         const data = await CustomField.create(customField);

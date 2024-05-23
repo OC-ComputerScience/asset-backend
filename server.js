@@ -50,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload());
 
 db.sequelize
-  .sync()
+  .sync({force: true})
   .then(async () => {
     console.log("Database synchronized successfully.");
 

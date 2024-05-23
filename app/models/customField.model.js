@@ -16,14 +16,6 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            required: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-            },
-            identifier: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-            },
         }
     );
     return CustomField;
