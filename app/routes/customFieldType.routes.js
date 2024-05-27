@@ -6,6 +6,8 @@ module.exports = (app) => {
     router.post("/", [authenticate], customFieldType.create);
 
     router.get("/", [authenticate], customFieldType.findAll);
+    
+    router.get("/type/:typeId", [authenticate], customFieldType.findAllForType);
 
     router.get("/:id", [authenticate], customFieldType.findOne);
 

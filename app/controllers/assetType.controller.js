@@ -18,14 +18,13 @@ exports.createAssetType = (req, res) => {
     typeName: req.body.typeName,
     desc: req.body.desc,
     categoryId: req.body.categoryId,
-    activeStatus: req.body.activeStatus,
-    dynamicFields: req.body.dynamicFields,
+    activeStatus: 1,
   };
 
   // Save AssetType in the database
   AssetType.create(assetType)
     .then((data) => {
-      res.status(201).json(data);
+      res.send(data);
     })
     .catch((err) => {
       res.status(500).send({

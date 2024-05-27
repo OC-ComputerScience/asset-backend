@@ -102,6 +102,21 @@ exports.getAssetProfileById = (req, res) => {
     });
 };
 
+exports.getAllForType = async(req, res) => {
+  const typeId = req.params.typeId;
+  try{
+    const data = await AssetProfile.findAll({
+      where: {typeId: typeId}
+    });
+    res.send(data);
+  }
+  catch(err){
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving asset profiles with type id=" + typeId
+    });
+  }
+}
+
 //get profiles by their respective types categoryId
 exports.getProfilesByCategoryId = (req, res) => {
   const categoryId = req.params.categoryId;
