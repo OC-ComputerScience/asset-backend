@@ -220,20 +220,24 @@ db.report.belongsTo(db.assetType, {
 db.assetType.hasMany(db.customFieldType, {
   foreignKey: "typeId",
   onDelete: "CASCADE",
+  allowNull: false
 });
 db.customFieldType.belongsTo(db.assetType, {
   foreignKey: "typeId",
   onDelete: "CASCADE",
+  allowNull: false
 });
 
 // CustomField and CustomFieldType Link
 db.customField.hasMany(db.customFieldType, {
   foreignKey: "customFieldId",
   onDelete: "CASCADE",
+  allowNull: false
 });
 db.customFieldType.belongsTo(db.customField, {
   foreignKey: "customFieldId",
   onDelete: "CASCADE",
+  allowNull: false
 });
 
 // CustomField and CustomFieldValue Link

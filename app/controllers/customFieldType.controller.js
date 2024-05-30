@@ -11,6 +11,8 @@ exports.create = async(req, res) => {
     const customFieldType = {
         typeId: req.body.typeId,
         customFieldId: req.body.customFieldId,
+        required: req.body.required,
+        identifier: req.body.identifier,
     };
     try{
         const data = await CustomFieldType.create(customFieldType);
@@ -38,6 +40,22 @@ exports.findAll = async(req, res) => {
         })
     }
 };
+
+exports.findAllForType = async(req, res) => {
+    const typeId = req.params.typeId;
+    try{
+        const data = await CustomFieldType.findAll({
+            where: {typeId: typeId},
+            include: [db.customField]
+        });
+        res.send(data);
+    }
+    catch(err){
+        res.status(500).send({
+            message: err.message || "Some error occurred while retrieving custom field types"
+        })
+    }
+}
 
 exports.findOne = async(req, res) => {
     const id = req.params.id;

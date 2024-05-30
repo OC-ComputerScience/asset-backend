@@ -7,7 +7,15 @@ module.exports = (sequelize, Sequelize) => {
                 primaryKey: true,
                 autoIncrement: true,
                 allowNull: false,
-            }
+            },
+            required: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+            },
+            identifier: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+            },
         }
     );
     return CustomFieldType;
