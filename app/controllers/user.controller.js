@@ -20,14 +20,6 @@ exports.create = (req, res) => {
     email: req.body.email,
     userRoleId: req.body.userRoleId,
     devPermission: req.body.devPermission,
-    canAdd: req.body.canAdd,
-    canEdit: req.body.canEdit,
-    canArchive: req.body.canArchive,
-    canActivate: req.body.canActivate,
-    canDelete: req.body.canDelete,
-    canManageMaintenance: req.body.canManageMaintenance,
-    canManageWarranties: req.body.canManageWarranties,
-    canManageLeases: req.body.canManageLeases,
     // refresh_token: req.body.refresh_token,
     // expiration_date: req.body.expiration_date
   };
@@ -159,23 +151,6 @@ exports.updateRole = async (req, res) => {
       }
     );
     if (num == 1) {
-      // If the user's role was updated successfully, update their permissions
-      const userRole = await UserRole.findByPk(userRoleId);
-      if (userRole) {
-        await User.update(
-          {
-            canAdd: userRole.defaultCanAdd,
-            canEdit: userRole.defaultCanEdit,
-            canDelete: userRole.defaultCanDelete,
-            canArchive: userRole.defaultCanArchive,
-            canActivate: userRole.defaultCanActivate,
-            canManageMaintenance: userRole.defaultCanManageMaintenance,
-            canManageWarranties: userRole.defaultCanManageWarranties,
-            canManageLeases: userRole.defaultCanManageLeases,
-          },
-          { where: { id: id } }
-        );
-      }
       res.send({ message: "User's role and permissions were updated successfully." });
     } else {
       res.send({
@@ -189,7 +164,6 @@ exports.updateRole = async (req, res) => {
       .send({ message: "Error updating User's role with id=" + id });
   }
 };
-
 
 // Delete a User with the specified id in the request
 exports.delete = (req, res) => {
