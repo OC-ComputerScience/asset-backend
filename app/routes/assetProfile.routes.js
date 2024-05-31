@@ -14,6 +14,8 @@ module.exports = (app) => {
   
     // Retrieve a single AssetProfile by profileId
     router.get("/:profileId", [authenticate], assetProfile.getAssetProfileById);
+
+    router.get("/type/:typeId", [authenticate], assetProfile.getAllForType);
   
     //Retrieve all asset profiles with categoryId 
     router.get("/byCategoryId/:categoryId", [authenticate], assetProfile.getProfilesByCategoryId);

@@ -50,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload());
 
 db.sequelize
-  .sync()
+  .sync({force: false})
   .then(async () => {
     console.log("Database synchronized successfully.");
 
@@ -102,6 +102,10 @@ require("./app/routes/buildingAsset.routes")(app);
 require("./app/routes/roomAsset.routes")(app);
 require("./app/routes/report.routes")(app);
 require("./app/routes/email.routes")(app);
+require("./app/routes/customField.routes.js")(app);
+require("./app/routes/customFieldValue.routes.js")(app);
+require("./app/routes/customFieldType.routes.js")(app);
+
 
 // Start email scheduling script
 scheduleCronJob();

@@ -22,10 +22,7 @@ db.session = require("./session.model.js")(sequelize, Sequelize);
 db.assetType = require("./assetType.model.js")(sequelize, Sequelize);
 db.assetProfile = require("./assetProfile.model.js")(sequelize, Sequelize);
 db.profileData = require("./profileData.model.js")(sequelize, Sequelize);
-db.serializedAsset = require("./serializedAsset.model.js")(
-  sequelize,
-  Sequelize
-);
+db.serializedAsset = require("./serializedAsset.model.js")(sequelize, Sequelize);
 db.lease = require("./lease.model.js")(sequelize, Sequelize);
 db.warranty = require("./warranty.model.js")(sequelize, Sequelize);
 db.service = require("./service.model.js")(sequelize, Sequelize);
@@ -38,6 +35,9 @@ db.room = require("./room.model.js")(sequelize, Sequelize);
 db.buildingAsset = require("./buildingAsset.model.js")(sequelize, Sequelize);
 db.roomAsset = require("./roomAsset.model.js")(sequelize, Sequelize);
 db.report = require("./report.model.js")(sequelize, Sequelize);
+db.customField = require("./customField.model.js")(sequelize, Sequelize);
+db.customFieldType = require("./customFieldType.model.js")(sequelize, Sequelize);
+db.customFieldValue = require("./customFieldValue.model.js")(sequelize, Sequelize);
 // User and UserRole
 db.userRole.hasMany(db.user, {
   foreignKey: "userRoleId",
@@ -213,6 +213,40 @@ db.assetType.hasMany(db.report, {
 });
 db.report.belongsTo(db.assetType, {
   foreignKey: "typeId",
+  onDelete: "CASCADE",
+});
+
+// AssetType and CustomFieldType Link
+db.assetType.hasMany(db.customFieldType, {
+  foreignKey: "typeId",
+  onDelete: "CASCADE",
+  allowNull: false
+});
+db.customFieldType.belongsTo(db.assetType, {
+  foreignKey: "typeId",
+  onDelete: "CASCADE",
+  allowNull: false
+});
+
+// CustomField and CustomFieldType Link
+db.customField.hasMany(db.customFieldType, {
+  foreignKey: "customFieldId",
+  onDelete: "CASCADE",
+  allowNull: false
+});
+db.customFieldType.belongsTo(db.customField, {
+  foreignKey: "customFieldId",
+  onDelete: "CASCADE",
+  allowNull: false
+});
+
+// CustomField and CustomFieldValue Link
+db.customField.hasMany(db.customFieldValue, {
+  foreignKey: 'customFieldId',
+  onDelete: "CASCADE",
+});
+db.customFieldValue.belongsTo(db.customField, {
+  foreignKey: "customFieldId",
   onDelete: "CASCADE",
 });
 
