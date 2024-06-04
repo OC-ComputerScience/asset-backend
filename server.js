@@ -67,7 +67,7 @@ db.sequelize
     await initializePersonAssets();
     await initializeBuildingAssets();
     await initializeRoomAssets();
-    await initializeProfileData();
+    // await initializeProfileData();
     await initializeReports();
     await initializeLogs();
     await initializeWarranties();

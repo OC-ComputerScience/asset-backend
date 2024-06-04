@@ -14,6 +14,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+const cascade = 'CASCADE';
 
 db.assetCategory = require("./assetCategory.model.js")(sequelize, Sequelize);
 db.userRole = require("./userRole.model.js")(sequelize, Sequelize);
@@ -59,37 +60,37 @@ db.userRole.belongsTo(db.assetCategory, {
 });
 
 // Serialized asset and log
-db.serializedAsset.hasOne(db.log, { foreignKey: "serializedAssetId", onDelete: "CASCADE" });
-db.log.belongsTo(db.serializedAsset, { foreignKey: "serializedAssetId", onDelete: "CASCADE" });
+db.serializedAsset.hasOne(db.log, { foreignKey: "serializedAssetId", onDelete: cascade });
+db.log.belongsTo(db.serializedAsset, { foreignKey: "serializedAssetId", onDelete: cascade });
 
 // Users and Sessions Link
-db.user.hasMany(db.session, { foreignKey: "userId", onDelete: "CASCADE" });
-db.session.belongsTo(db.user, { foreignKey: "userId", onDelete: "CASCADE" });
+db.user.hasMany(db.session, { foreignKey: "userId", onDelete: cascade });
+db.session.belongsTo(db.user, { foreignKey: "userId", onDelete: cascade });
 
 // AssetCategory and AssetType Link
 db.assetCategory.hasMany(db.assetType, {
   foreignKey: "categoryId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.assetType.belongsTo(db.assetCategory, {
   foreignKey: "categoryId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // AssetType and AssetProfile Link
 db.assetType.hasMany(db.assetProfile, {
   foreignKey: "typeId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.assetProfile.belongsTo(db.assetType, {
   foreignKey: "typeId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // AssetProfile and ProfileData Link
 db.assetProfile.hasMany(db.profileData, {
   foreignKey: "profileId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.profileData.belongsTo(db.assetProfile, {
   foreignKey: "profileId",
@@ -98,156 +99,176 @@ db.profileData.belongsTo(db.assetProfile, {
 // Asset Profile and SerializedAsset Link
 db.assetProfile.hasMany(db.serializedAsset, {
   foreignKey: "profileId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.serializedAsset.belongsTo(db.assetProfile, {
   foreignKey: "profileId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // Lease and SerializedAsset Link
 db.serializedAsset.hasOne(db.lease, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.lease.belongsTo(db.serializedAsset, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // Warranty and SerializedAsset Link
 db.serializedAsset.hasOne(db.warranty, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.warranty.belongsTo(db.serializedAsset, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // Service and SerializedAsset Link
 db.serializedAsset.hasOne(db.service, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.service.belongsTo(db.serializedAsset, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // Person and PersonAsset Link
 db.person.hasMany(db.personAsset, {
   foreignKey: "personId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.personAsset.belongsTo(db.person, {
   foreignKey: "personId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // PersonAsset and SerializedAsset Link
 db.serializedAsset.hasOne(db.personAsset, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.personAsset.belongsTo(db.serializedAsset, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // SerializedAsset and Barcode Link
 db.serializedAsset.hasMany(db.barcode, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.barcode.belongsTo(db.serializedAsset, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // Building and Rooms Link
-db.building.hasMany(db.room, { foreignKey: "buildingId", onDelete: "CASCADE" });
+db.building.hasMany(db.room, { foreignKey: "buildingId", onDelete: cascade });
 db.room.belongsTo(db.building, {
   foreignKey: "buildingId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // Buildings and BuildingAsset Link
 db.building.hasMany(db.buildingAsset, {
   foreignKey: "buildingId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.buildingAsset.belongsTo(db.building, {
   foreignKey: "buildingId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // Room and Room Asset Link
-db.room.hasMany(db.roomAsset, { foreignKey: "roomId", onDelete: "CASCADE" });
-db.roomAsset.belongsTo(db.room, { foreignKey: "roomId", onDelete: "CASCADE" });
+db.room.hasMany(db.roomAsset, { foreignKey: "roomId", onDelete: cascade });
+db.roomAsset.belongsTo(db.room, { foreignKey: "roomId", onDelete: cascade });
 
 // BuildingAsset and SerializedAsset Link
 db.serializedAsset.hasOne(db.buildingAsset, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.buildingAsset.belongsTo(db.serializedAsset, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // RoomAsset and SerializedAsset Link
 db.serializedAsset.hasOne(db.roomAsset, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.roomAsset.belongsTo(db.serializedAsset, {
   foreignKey: "serializedAssetId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // AssetType and Report Link
 db.assetType.hasMany(db.report, {
   foreignKey: "typeId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.report.belongsTo(db.assetType, {
   foreignKey: "typeId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 
 // AssetType and CustomFieldType Link
 db.assetType.hasMany(db.customFieldType, {
   foreignKey: "typeId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
   allowNull: false
 });
 db.customFieldType.belongsTo(db.assetType, {
   foreignKey: "typeId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
   allowNull: false
 });
 
 // CustomField and CustomFieldType Link
 db.customField.hasMany(db.customFieldType, {
   foreignKey: "customFieldId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
   allowNull: false
 });
 db.customFieldType.belongsTo(db.customField, {
   foreignKey: "customFieldId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
   allowNull: false
 });
 
 // CustomField and CustomFieldValue Link
 db.customField.hasMany(db.customFieldValue, {
   foreignKey: 'customFieldId',
-  onDelete: "CASCADE",
+  onDelete: cascade,
 });
 db.customFieldValue.belongsTo(db.customField, {
   foreignKey: "customFieldId",
-  onDelete: "CASCADE",
+  onDelete: cascade,
+});
+
+// CustomField and ProfileData link
+db.customFieldValue.hasMany(db.profileData, {
+  foreignKey: 'fieldValueId',
+  onDelete: cascade
+});
+db.profileData.belongsTo(db.customFieldValue, {
+  foreignKey: 'fieldValueId',
+  onDelete: cascade
+});
+
+// Profile and ProfileData link
+db.assetProfile.hasMany(db.profileData, {
+  foreignKey: 'profileId',
+  onDelete: cascade
+});
+db.profileData.belongsTo(db.assetProfile, {
+  foreignKey: 'profileId',
+  onDelete: cascade
 });
 
 module.exports = db;
