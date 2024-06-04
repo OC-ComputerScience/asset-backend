@@ -46,7 +46,6 @@ exports.findAll = (req, res) => {
       {
         model: UserRole,
         as: "userRole",
-        attributes: ["name"],
       },
     ],
   })
