@@ -1,5 +1,5 @@
 {
-  "name": "t1-asset-tracking-backend",
+  "name": "asset-tracking-backend",
   "version": "1.0.0",
   "description": "Asset Tracking Backend Service: A robust and scalable Node.js server providing RESTful API services for asset management, including authentication, data storage, notifications, and integration with external services like Google APIs.",
   "main": "server.js",

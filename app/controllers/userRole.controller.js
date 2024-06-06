@@ -17,14 +17,26 @@ exports.create = async (req, res) => {
     const userRole = await UserRole.create({
       name: req.body.name,
       categoryId: req.body.categoryId,
-      defaultCanAdd: req.body.defaultCanAdd,
-      defaultCanEdit: req.body.defaultCanEdit,
-      defaultCanDelete: req.body.defaultCanDelete,
-      defaultCanArchive: req.body.defaultCanArchive,
-      defaultCanActivate: req.body.defaultCanActivate,
-      defaultCanManageMaintenance: req.body.defaultCanManageMaintenance,
-      defaultCanManageWarranties: req.body.defaultCanManageWarranties,
-      defaultCanManageLeases: req.body.defaultCanManageLeases
+      canAdd: req.body.canAdd,
+      canEdit: req.body.canEdit,
+      canDelete: req.body.canDelete,
+      canArchive: req.body.canArchive,
+      canActivate: req.body.canActivate,
+      viewCheckOutIn: req.body.viewCheckOutIn,
+      viewServices: req.body.viewServices,
+      viewMaintenance: req.body.viewMaintenance,
+      viewWarranties: req.body.viewWarranties,
+      viewLeases: req.body.viewLeases,
+      viewReports: req.body.viewReports,
+      viewManage: req.body.viewManage,
+      viewAssets: req.body.viewAssets,
+      viewFacilities: req.body.viewFacilities,
+      viewPeople: req.body.viewPeople,
+      viewUsers: req.body.viewUsers,
+      isAdmin: req.body.isAdmin,
+      isManager: req.body.isManager,
+      isWorker: req.body.isWorker,
+      isUnassigned: req.body.isUnassigned
     });
     res.send(userRole);
   } catch (err) {

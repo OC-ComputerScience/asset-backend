@@ -1,6 +1,7 @@
 const db = require("../models");
 const authconfig = require("../config/auth.config");
 const User = db.user;
+const UserRole = db.userRole;
 const Session = db.session;
 const Op = db.Sequelize.Op;
 
@@ -62,22 +63,44 @@ exports.login = async (req, res) => {
     .then((data) => {
       if (data != null) {
         user = data.dataValues;
+
+        UserRole.findOne({
+          where: {
+            id: user.userRoleId,
+          },
+        })
+        .then((response) => {
+          role = response.dataValues;
+          user.canAdd = role.canAdd;
+          user.canEdit = role.canEdit;
+          user.canArchive = role.canArchive;
+          user.canActivate = role.canActivate;
+          user.canDelete = role.canDelete;
+          user.viewCheckOutIn = role.viewCheckOutIn;
+          user.viewServices = role.viewServices;
+          user.viewMaintenance = role.viewMaintenance;
+          user.viewWarranties = role.viewWarranties;
+          user.viewLeases = role.viewLeases;
+          user.viewReports = role.viewReports;
+          user.viewManage = role.viewManage;
+          user.viewAssets = role.viewAssets;
+          user.viewFacilities = role.viewFacilities;
+          user.viewPeople = role.viewPeople;
+          user.viewUsers = role.viewUsers;
+          user.isAdmin = role.isAdmin;
+          user.isWorker = role.isWorker;
+          user.isManager = role.isManager;
+          user.isUnassigned = role.isUnassigned;
+          user.categoryId = role.categoryId;
+        })        
       } else {
         // create a new User and save to database
         user = {
           fName: firstName,
           lName: lastName,
           email: email,
-          userRoleId: data ? data.userRoleId : 2,
+          userRoleId: 2,
           devPermission: false,
-          canAdd: false,
-          canEdit: false,
-          canDelete: false,
-          canArchive: false,
-          canActivate: false,
-          canManageMaintenance: false,
-          canManageWarranties: false,
-          canManageLeases: false,
         };
       }
     })
@@ -90,6 +113,26 @@ exports.login = async (req, res) => {
     await User.create(user)
       .then((data) => {
         user = data.dataValues;
+        user.canAdd = false;
+        user.canEdit = false;
+        user.canArchive = false;
+        user.canActivate = false;
+        user.canDelete = false;
+        user.viewCheckOutIn = false;
+        user.viewServices = false;
+        user.viewMaintenance = false;
+        user.viewWarranties = false;
+        user.viewLeases = false;
+        user.viewReports = false;
+        user.viewManage = false;
+        user.viewAssets = false;
+        user.viewFacilities = false;
+        user.viewPeople = false;
+        user.viewUsers = false;
+        user.isAdmin = false;
+        user.isManager = false;
+        user.isWorker = false;
+        user.isUnassigned = true;
         // res.send({ message: "User was registered successfully!" });
       })
       .catch((err) => {
@@ -149,18 +192,22 @@ exports.login = async (req, res) => {
           session = {};
         } else {
           // if the session is still valid, then send info to the front end
-          let userInfo = {
-            email: user.email,
-            fName: user.fName,
-            lName: user.lName,
-            fullName: user.fullName,
-            userId: user.id,
-            userRoleId: user.userRoleId,
-            token: session.token,
-            // refresh_token: user.refresh_token,
-            // expiration_date: user.expiration_date
-          };
-          res.send(userInfo);
+
+          // let userInfo = {
+          //   email: user.email,
+          //   fName: user.fName,
+          //   lName: user.lName,
+          //   fullName: user.fullName,
+          //   userId: user.id,
+          //   userRoleId: user.userRoleId,
+          //   token: session.token,
+          //   // refresh_token: user.refresh_token,
+          //   // expiration_date: user.expiration_date
+          // };
+          // res.send(userInfo);
+          user.userId = user.id;
+          user.token = session.token;
+          res.send(user);
         }
       }
     })
@@ -187,27 +234,30 @@ exports.login = async (req, res) => {
 
     await Session.create(session)
       .then(() => {
-        let userInfo = {
-          email: user.email,
-          fName: user.fName,
-          lName: user.lName,
-          fullName: user.fullName,
-          userId: user.id,
-          userRoleId: user.userRoleId,
-          devPermission: user.devPermission,
-          canAdd: user.canAdd,
-          canEdit: user.canEdit,
-          canDelete: user.canDelete,
-          canArchive: user.canArchive,
-          canActivate: user.canActivate,
-          canManageMaintenance: user.canManageMaintenance,
-          canManageWarranties: user.canManageWarranties,
-          canManageLeases: user.canManageLeases,
-          token: token,
-          // refresh_token: user.refresh_token,
-          // expiration_date: user.expiration_date
-        };
-        res.send(userInfo);
+        user.token = token;
+        user.userId = user.id;
+        // let userInfo = {
+        //   email: user.email,
+        //   fName: user.fName,
+        //   lName: user.lName,
+        //   fullName: user.fullName,
+        //   userId: user.id,
+        //   userRoleId: user.userRoleId,
+        //   devPermission: user.devPermission,
+        //   canAdd: user.canAdd,
+        //   canEdit: user.canEdit,
+        //   canDelete: user.canDelete,
+        //   canArchive: user.canArchive,
+        //   canActivate: user.canActivate,
+        //   canManageMaintenance: user.canManageMaintenance,
+        //   canManageWarranties: user.canManageWarranties,
+        //   canManageLeases: user.canManageLeases,
+        //   token: token,
+        //   // refresh_token: user.refresh_token,
+        //   // expiration_date: user.expiration_date
+        // };
+        // res.send(userInfo);
+        res.send(user);
       })
       .catch((err) => {
         res.status(500).send({ message: err.message });
