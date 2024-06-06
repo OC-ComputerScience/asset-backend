@@ -261,14 +261,4 @@ db.profileData.belongsTo(db.customFieldValue, {
   onDelete: cascade
 });
 
-// Profile and ProfileData link
-db.assetProfile.hasMany(db.profileData, {
-  foreignKey: 'profileId',
-  onDelete: cascade
-});
-db.profileData.belongsTo(db.assetProfile, {
-  foreignKey: 'profileId',
-  onDelete: cascade
-});
-
 module.exports = db;
