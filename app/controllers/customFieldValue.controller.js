@@ -52,6 +52,45 @@ exports.findOne = async(req, res) => {
     }
 };
 
+exports.findAllForProfile = async(req, res) => {
+    const profileId = req.params.profileId;
+    try{
+        const data = await CustomFieldValue.findAll({
+            include: [{
+                model: db.profileData,
+                required: true,
+                include: [
+                    {
+                        model: db.assetProfile,
+                        where: {profileId: profileId}
+                    }
+                ]
+            }]
+        });
+        res.send(data);
+    }
+    catch(err) {
+        res.status(500).send({
+            message: err.message || "Some error occurred while retrieving custom Field Values with with profile ID: " + profileId,
+        });
+    }
+}
+
+exports.findAllForField = async(req, res) => {
+    const fieldId = req.params.fieldId;
+    try{
+        const data = await CustomFieldValue.findAll({
+            where: {customFieldId: fieldId}
+        });
+        res.send(data);
+    }
+    catch(err){
+        res.status(500).send({
+            message: err.message || "Some error occurred while retrieving custom Field Values with with field type ID: " + fieldId,
+        });
+    }
+};
+
 exports.update = async(req, res) => {
     const id = req.params.id;
     const data = req.body;

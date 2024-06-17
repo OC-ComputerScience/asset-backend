@@ -7,6 +7,10 @@ module.exports = (app) => {
 
     router.get("/", [authenticate], customFieldValue.findAll);
 
+    router.get("/field/:fieldId", [authenticate], customFieldValue.findAllForField);
+
+    router.get("/profile/:profileId", [authenticate], customFieldValue.findAllForProfile);
+
     router.get("/:id", [authenticate], customFieldValue.findOne);
 
     router.put("/:id", [authenticate], customFieldValue.update);

@@ -16,6 +16,10 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.BOOLEAN,
                 allowNull: false,
             },
+            sequence: {
+                type: Sequelize.INTEGER,
+                allowNull: true
+            }
         }
     );
     return CustomFieldType;
