@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const db = require("../models");
 const Room = db.room;
 const Building = db.building;
@@ -60,6 +61,38 @@ exports.getRoomById = (req, res) => {
         model: Building,
         as: "building",
         attributes: ["buildingId", "name", "abbreviation", "activeStatus"],
+      },
+    ],
+  })
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find Room with roomId=${roomId}.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Error retrieving Room with roomId=" + roomId,
+      });
+    });
+};
+
+// Find a single Room with a roomId
+exports.getRoomByBldRoomNumber = (req, res) => {
+  const roomNo = req.params.roomNo;
+  const building = req.params.building;
+console.log("roomNo: " + roomNo + " building: " + building);
+  Room.findAll( {
+    where: { roomNo: roomNo},
+    include: [
+      {
+        model: Building,
+        as: "building",
+        attributes: ["buildingId", "name", "abbreviation", "activeStatus"],
+        where: { abbreviation: building},
       },
     ],
   })
