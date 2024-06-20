@@ -25,6 +25,7 @@ exports.createPerson = (req, res) => {
     lName: req.body.lName,
     email: req.body.email,
     idNumber: req.body.idNumber,
+    roomId: req.body.roomId,
     activeStatus: req.body.activeStatus,
   };
 

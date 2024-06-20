@@ -146,6 +146,16 @@ db.personAsset.belongsTo(db.person, {
   onDelete: cascade,
 });
 
+// Person and Rooom Link
+db.room.hasMany(db.person, {
+  foreignKey: "roomId",
+  onDelete: cascade,
+});
+db.person.belongsTo(db.room, {
+  foreignKey: "roomId",
+  onDelete: cascade,
+});
+
 // PersonAsset and SerializedAsset Link
 db.serializedAsset.hasOne(db.personAsset, {
   foreignKey: "serializedAssetId",
