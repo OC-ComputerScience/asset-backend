@@ -1,5 +1,7 @@
 const db = require("../models");
 const Person = db.person;
+const Room = db.room;
+const Building = db.building;
 const Op = db.Sequelize.Op;
 const axios = require('axios');
 
@@ -44,7 +46,17 @@ exports.createPerson = (req, res) => {
 
 // Retrieve all Persons from the database.
 exports.getAllPersons = (req, res) => {
-  Person.findAll()
+  Person.findAll(
+    {
+      include: [
+        {
+          model: Room ,
+          include : [{model: Building}]
+        },
+      ],
+    }
+
+  )
     .then((data) => {
       res.status(200).json(data);
     })
@@ -98,7 +110,16 @@ exports.getOCPersonByEmail = (req, res) => {
 exports.getPersonById = (req, res) => {
   const personId = req.params.personId;
 
-  Person.findByPk(personId)
+  Person.findByPk(personId,
+    {
+      include: [
+        {
+          model: Room,
+          include : [{model: Building}]
+        },
+      ],
+    }
+  )
     .then((data) => {
       if (data) {
         res.status(200).json(data);
