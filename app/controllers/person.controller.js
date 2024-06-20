@@ -91,13 +91,15 @@ exports.getOCPersonById = (req, res) => {
 exports.getOCPersonByEmail = (req, res) => {
   const email = req.params.email;
 
+
   axios.get('http://stingray.oc.edu/api/assetmanagementuserprofile/'+ email)
     .then(function (response) {
       // handle success
+
       res.status(200).json(response.data);
     })
     .catch(function (error) {
-      res.status(500).send({
+      res.status(response.status).send({
         message: "Error retrieving Person with email=" + email,
       });
       console.log(error);
