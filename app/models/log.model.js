@@ -20,13 +20,21 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      description: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       serviceDate: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: true,
+      },
+      scheduledDate: {
+        type: Sequelize.DATE,
+        allowNull: true,
       },
       performedBy: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       isPreventative: {
         type: Sequelize.BOOLEAN,
