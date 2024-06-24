@@ -24,6 +24,7 @@ exports.createWarranty = (req, res) => {
   const warranty = {
 
     warrantyDescription: req.body.warrantyDescription,
+    warrantyNotes: req.body.warrantyNotes,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     length: req.body.length,

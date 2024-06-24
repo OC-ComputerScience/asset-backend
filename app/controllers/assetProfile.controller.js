@@ -24,6 +24,7 @@ exports.createAssetProfile = (req, res) => {
     warrantyStartDate: req.body.warrantyStartDate,
     warrantyEndDate: req.body.warrantyEndDate,
     warrantyDescription: req.body.warrantyDescription,
+    warrantyNotes: req.body.warrantyNotes,
   };
 
   // Save AssetProfile in the database
