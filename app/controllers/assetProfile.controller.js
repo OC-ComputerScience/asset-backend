@@ -32,6 +32,7 @@ exports.createAssetProfile = (req, res) => {
       res.status(201).json(data);
     })
     .catch((err) => {
+
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the AssetProfile.",
