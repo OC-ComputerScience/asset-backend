@@ -3,7 +3,7 @@ const Person = db.person;
 const Room = db.room;
 const Building = db.building;
 const Op = db.Sequelize.Op;
-const axios = require('axios');
+const axios = require('axios'); 
 
 // Create and Save a new Person
 exports.createPerson = (req, res) => {
@@ -99,7 +99,7 @@ exports.getOCPersonByEmail = (req, res) => {
       res.status(200).json(response.data);
     })
     .catch(function (error) {
-      res.status(response.status).send({
+      res.status(404).send({
         message: "Error retrieving Person with email=" + email,
       });
       console.log(error);
