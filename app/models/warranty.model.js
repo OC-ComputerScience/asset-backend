@@ -12,6 +12,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      warrantyNotes: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       startDate: {
         type: Sequelize.DATE,
         allowNull: false,

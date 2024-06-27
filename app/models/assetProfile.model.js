@@ -33,6 +33,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      warrantyNotes: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       typeId: {
         type: Sequelize.INTEGER,
         allowNull: false,

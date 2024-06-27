@@ -24,6 +24,7 @@ exports.createAssetProfile = (req, res) => {
     warrantyStartDate: req.body.warrantyStartDate,
     warrantyEndDate: req.body.warrantyEndDate,
     warrantyDescription: req.body.warrantyDescription,
+    warrantyNotes: req.body.warrantyNotes,
   };
 
   // Save AssetProfile in the database
@@ -32,6 +33,7 @@ exports.createAssetProfile = (req, res) => {
       res.status(201).json(data);
     })
     .catch((err) => {
+
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the AssetProfile.",
