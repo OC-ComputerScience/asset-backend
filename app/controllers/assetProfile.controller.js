@@ -235,7 +235,7 @@ exports.bulkCreateAssetProfile = (req, res) => {
     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
     const hexToUtf8 = convert("hex", "utf8");
     let tsvData = hexToUtf8(tsvFile.data).split("\r\n");
-    console.log(tsvData);
+  
     let tsvRows = [];
     tsvData.forEach((data) => {
       tsvRows.push(data.split("\t"));
@@ -267,7 +267,7 @@ exports.bulkCreateAssetProfile = (req, res) => {
 
   const tsvFile = req.files.file;
   data = convert(tsvFile); // pass tsv file to be converted
-  console.log(data);
+
 
   AssetProfile.bulkCreate(data)
     .then((profiles) => {

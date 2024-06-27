@@ -6,7 +6,7 @@ const Op = db.Sequelize.Op;
 
 // Create and Save a new Warranty
 exports.createWarranty = (req, res) => {
-  console.log(req.body)
+
   // Validate request
   if (
     !req.body.warrantyDescription ||
