@@ -8,6 +8,9 @@ module.exports = (app) => {
   
     // Retrieve all SerializedAssets
     router.get("/", [authenticate], serializedAsset.getAllSerializedAssets);
+
+    // Retrieve all SerializedAssets
+    router.get("/profile/:profileId", [authenticate], serializedAsset.getAllSerializedAssetsForProfile);
   
     // Retrieve a single SerializedAsset by serializedAssetId
     router.get("/:serializedAssetId", [authenticate], serializedAsset.getSerializedAssetById);

@@ -343,7 +343,7 @@ exports.deleteAllPersonAssets = (req, res) => {
 // Retrieve all PersonAssets with a specific serializedAssetId
 exports.getPersonAssetsBySerializedAssetId = (req, res) => {
   const serializedAssetId = req.params.serializedAssetId;
-  console.log("Controller recieved serializedAssetId" + serializedAssetId)
+
   PersonAsset.findAll({
     where: { serializedAssetId: serializedAssetId },
     include: [
@@ -362,7 +362,7 @@ exports.getPersonAssetsBySerializedAssetId = (req, res) => {
     ]
   })
   .then((data) => {
-    console.log("Person asset controller received serializedAssetId: " + serializedAssetId);
+ 
     res.status(200).json(data); // Always return 200 status with the data, even if it's an empty array
   })
   .catch((err) => {
