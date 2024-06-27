@@ -84,7 +84,7 @@ exports.getRoomById = (req, res) => {
 exports.getRoomByBldRoomNumber = (req, res) => {
   const roomNo = req.params.roomNo;
   const building = req.params.building;
-console.log("roomNo: " + roomNo + " building: " + building);
+
   Room.findAll( {
     where: { roomNo: roomNo},
     include: [
