@@ -11,6 +11,9 @@ module.exports = (app) => {
   
     // Retrieve a single Room by roomId
     router.get("/:roomId", [authenticate], room.getRoomById);
+
+    // Retrieve a single Room by roomId
+    router.get("/building/:building/room/:roomNo", [authenticate], room.getRoomByBldRoomNumber);
   
     // Update a Room by roomId
     router.put("/:roomId", [authenticate], room.updateRoom);

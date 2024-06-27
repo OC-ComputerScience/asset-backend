@@ -11,7 +11,13 @@ module.exports = (app) => {
   
     // Retrieve a single Person by personId
     router.get("/:personId", [authenticate], person.getPersonById);
-  
+
+    // Retrieve a single OC Person by personId
+    router.get("/OCPerson/id/:personId", [authenticate], person.getOCPersonById);
+
+    // Retrieve a single OC Person by personId
+    router.get("/OCPerson/email/:email", [authenticate], person.getOCPersonByEmail);
+
     // Update a Person by personId
     router.put("/:personId", [authenticate], person.updatePerson);
   
