@@ -13,6 +13,7 @@ exports.create = async(req, res) => {
         customFieldId: req.body.customFieldId,
         required: req.body.required,
         identifier: req.body.identifier,
+        sequence: req.body.sequence,
     };
     try{
         const data = await CustomFieldType.create(customFieldType);

@@ -89,6 +89,10 @@ exports.getProfileDataByProfileId = (req, res) => {
 
   ProfileData.findAll({
     where: { profileId: profileId },
+    include: [{
+      model: db.customFieldValue,
+      include: [db.customField]
+    }]
   })
     .then((data) => {
       if (data.length > 0) {
