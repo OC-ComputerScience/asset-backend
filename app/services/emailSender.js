@@ -20,7 +20,7 @@ async function sendEmail(recipient) {
     }
 
     // Send the email
-    const info = await transporter.sendMail(mailOptions)
+   // const info = await transporter.sendMail(mailOptions)
     console.log('Email sent: ' + info.response)
     return 'Email sent successfully.'
   } catch (error) {
@@ -49,7 +49,7 @@ async function adminNotification(workerDetails, userDetails, assetDetails) {
     }
 
     // Send the email
-    const info = await transporter.sendMail(mailOptions)
+    //const info = await transporter.sendMail(mailOptions)
     console.log('Admin Notification email sent: ' + info.response)
     return 'Email sent successfully.'
   } catch (error) {
@@ -78,7 +78,7 @@ async function checkinNotification(workerDetails, userDetails, assetDetails) {
     }
 
     // Send the email
-    const info = await transporter.sendMail(mailOptions)
+    //const info = await transporter.sendMail(mailOptions)
     console.log('Admin Notification email sent: ' + info.response)
     return 'Email sent successfully.'
   } catch (error) {
@@ -105,7 +105,7 @@ async function confirmCheckOutEmail(emailDetails, assetDetails) {
       html: emailContent
     }
 
-    const info = await transporter.sendMail(mailOptions)
+   // const info = await transporter.sendMail(mailOptions)
     console.log('Confirm CheckOut email sent: ' + info.response)
     return 'Email sent successfully.'
 
@@ -125,7 +125,7 @@ async function confirmCheckInEmail(emailDetails, assetDetails) {
       <p>Receipt for check-in of ${assetDetails.serializedAssetName}</p>`
     }
 
-    const info = await transporter.sendMail(mailOptions)
+  //  const info = await transporter.sendMail(mailOptions)
     console.log('Confirm CheckIn email: ' + info.response)
     return 'Email sent successfully.'
 
@@ -147,7 +147,7 @@ async function apologyEmail(recipient) {
     }
 
     // Send the email
-    const info = await transporter.sendMail(mailOptions)
+  //  const info = await transporter.sendMail(mailOptions)
     console.log('Email sent: ' + info.response)
     return 'Email sent successfully.'
   } catch (error) {
@@ -179,7 +179,7 @@ async function checkinReminderEmail(emailDetails, assetDetails) {
     }
 
     // Send the email
-    const info = await transporter.sendMail(mailOptions)
+ //   const info = await transporter.sendMail(mailOptions)
     console.log('Email sent: ' + info.response)
     return 'Reminder email sent successfully.'
   } catch (error) {
