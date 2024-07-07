@@ -3,6 +3,7 @@ const Person = db.person;
 const Room = db.room;
 const Building = db.building;
 const Op = db.Sequelize.Op;
+const axios = require('axios'); 
 
 // Create and Save a new Person
 exports.createPerson = (req, res) => {
@@ -65,6 +66,47 @@ exports.getAllPersons = (req, res) => {
       });
     });
 };
+
+// Find a single OCPerson with a personId
+exports.getOCPersonById = (req, res) => {
+  const personId = req.params.personId;
+
+
+  axios.get('http://stingray.oc.edu/api/assetmanagementuserprofile/'+ personId)
+    .then(function (response) {
+      // handle success
+
+      res.status(200).json(response.data);
+    })
+    .catch(function (error) {
+      res.status(500).send({
+        message: "Error retrieving Person with personId=" + personId,
+      });
+      console.log(error);
+    })
+
+};
+
+// Find a single OCPerson with a email
+exports.getOCPersonByEmail = (req, res) => {
+  const email = req.params.email;
+
+
+  axios.get('http://stingray.oc.edu/api/assetmanagementuserprofile/'+ email)
+    .then(function (response) {
+      // handle success
+
+      res.status(200).json(response.data);
+    })
+    .catch(function (error) {
+      res.status(404).send({
+        message: "Error retrieving Person with email=" + email,
+      });
+      console.log(error);
+    })
+
+};
+
 
 // Find a single Person with a personId
 exports.getPersonById = (req, res) => {
