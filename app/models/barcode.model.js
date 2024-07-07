@@ -8,7 +8,11 @@ module.exports = (sequelize, Sequelize) => {
         autoIncrement: true,
         allowNull: false,
       },
-      blackAndWhiteBinaryCodeOffBackOfLabelThing: {
+      barcodeType: {
+        type: Sequelize.STRING (20),
+        allowNull: false,
+      },
+      barcode: {
         type: Sequelize.STRING,
         allowNull: false,
       },

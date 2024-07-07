@@ -18,18 +18,20 @@ exports.createAssetProfile = (req, res) => {
     profileName: req.body.profileName,
     typeId: req.body.typeId,
     purchasePrice: req.body.purchasePrice,
-    acquisitionDate: req.body.acquisitionDate,
-    activeStatus: req.body.activeStatus,
+    acquisitionDate: new Date(req.body.acquisitionDate),
+    activeStatus: 1,
     notes: req.body.notes,
     warrantyStartDate: req.body.warrantyStartDate,
     warrantyEndDate: req.body.warrantyEndDate,
     warrantyNotes: req.body.warrantyNotes,
+    features: req.body.features,
+    accessories: req.body.accessories,
   };
 
   // Save AssetProfile in the database
   AssetProfile.create(assetProfile)
     .then((data) => {
-      res.status(201).json(data);
+      res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
@@ -83,6 +85,11 @@ exports.getAssetProfileById = (req, res) => {
           "desc",
           "dynamicFields",
         ],
+      },
+      {
+        model: db.profileData,
+        required: true,
+        include: [ db.customFieldValue ]
       },
     ],
   })

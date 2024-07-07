@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Barcode
 exports.createBarcode = (req, res) => {
   // Validate request
-  if (!req.body.barcodeId || !req.body.barcode || !req.body.serializedAssetId) {
+  if (!req.body.barcodeId || !req.body.barcode || !req.body.serializedAssetId || !req.body.barcodeType) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
@@ -16,6 +16,7 @@ exports.createBarcode = (req, res) => {
   const barcode = {
     barcodeId: req.body.barcodeId,
     barcode: req.body.barcode,
+    barcodeType: req.body.barcodeType,
     serializedAssetId: req.body.serializedAssetId,
   };
 

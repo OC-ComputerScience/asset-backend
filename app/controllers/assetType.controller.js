@@ -64,9 +64,15 @@ exports.getAssetTypeById = (req, res) => {
     include: [
       {
         model: AssetCategory,
-        as: "assetCategory", // Ensure this alias matches the one defined in your associations
-        attributes: ["categoryId", "categoryName", "desc"], // Adjust attributes as needed
+        as: "assetCategory", 
+        attributes: ["categoryId", "categoryName", "desc"], 
       },
+      {
+        model: db.customFieldType,
+        required: true,
+        where: {typeId: typeId},
+        include: [db.customField],
+      }
     ],
   })
     .then((data) => {
