@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const db = require("../models");
 const AssetCategory = db.assetCategory;
 const AssetType = db.assetType;
@@ -84,7 +85,38 @@ exports.getAllSerializedAssets = (req, res) => {
       });
     });
 };
-
+// Retrieve all SerializedAssets from the database for Profile
+exports.getAllSerializedAssetsForProfile = (req, res) => {
+  const profleId = req.params.profileId;
+  SerializedAsset.findAll({
+    where: { profileId: profleId },
+    include: [
+      {
+        model: AssetProfile,
+        as: "assetProfile",
+        attributes: [
+          "profileId",
+          "profileName",
+          "typeId",
+          "purchasePrice",
+          "acquisitionDate",
+          "notes",
+          "activeStatus",
+        ],
+      },
+    ],
+  })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while retrieving serialized assets.",
+      });
+    });
+};
 // Find a single SerializedAsset with a serializedAssetId
 exports.getSerializedAssetById = (req, res) => {
   const serializedAssetId = req.params.serializedAssetId;

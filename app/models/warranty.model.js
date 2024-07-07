@@ -8,7 +8,11 @@ module.exports = (sequelize, Sequelize) => {
         autoIncrement: true,
         allowNull: false,
       },
-      warrantyType: {
+      warrantyDescription: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      warrantyNotes: {
         type: Sequelize.STRING,
         allowNull: false,
       },
