@@ -85,12 +85,12 @@ exports.getAssetProfileById = (req, res) => {
           "typeName",
           "categoryId",
           "desc",
-          "dynamicFields",
+         
         ],
       },
       {
         model: db.profileData,
-        required: true,
+        required: false,
         include: [ db.customFieldValue ]
       },
     ],
