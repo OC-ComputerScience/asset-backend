@@ -47,6 +47,20 @@ exports.getAllBarcodes = (req, res) => {
     });
 };
 
+// Retrieve all Barcodes with a serializedAssetId from the database.
+exports.getBarcodeBySerializedAssetId = (req, res) => {
+  Barcode.findAll( { where: { serializedAssetId: req.params.serializedAssetId }} )
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving barcodes.",
+      });
+    });
+};
+
 // Find a single Barcode with a barcodeId
 exports.getBarcodeById = (req, res) => {
   const barcodeId = req.params.barcodeId;

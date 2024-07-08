@@ -8,10 +8,13 @@ module.exports = (app) => {
   
     // Retrieve all Barcodes
     router.get("/", [authenticate], barcode.getAllBarcodes);
-  
+
     // Retrieve a single Barcode by barcodeId
     router.get("/:barcodeId", [authenticate], barcode.getBarcodeById);
-  
+
+    // Retrieve a  Barcodes by serializedAssetId
+    router.get("/bySerializedAsset/:serializedAssetId", [authenticate], barcode.getBarcodeBySerializedAssetId);
+
     // Update a Barcode by barcodeId
     router.put("/:barcodeId", [authenticate], barcode.updateBarcode);
   
