@@ -18,6 +18,16 @@ exports.create = (req, res) => {
     name: req.body.name,
     abbreviation: req.body.abbreviation,
     activeStatus: req.body.activeStatus,
+    yearBuilt: req.body.yearBuilt,
+    squareFeet: req.body.squareFeet,
+    numStories: req.body.numStories,
+    hasElevator: req.body.hasElevator,
+    hasFireMonitor: req.body.hasFireMonitor, 
+    hasSmokeAlarm: req.body.hasSmokeAlarm,
+    constructionType: req.body.constructionType, 
+    buildingValue: req.body.buildingValue,
+    buildingBPP: req.body.buildingBPP
+
   };
   // Save Building in the database
   Building.create(building)
