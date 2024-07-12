@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Barcode
 exports.createBarcode = (req, res) => {
   // Validate request
-  if (!req.body.barcodeId || !req.body.barcode || !req.body.serializedAssetId || !req.body.barcodeType) {
+  if ( !req.body.barcode || !req.body.serializedAssetId || !req.body.barcodeType) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
@@ -36,6 +36,20 @@ exports.createBarcode = (req, res) => {
 // Retrieve all Barcodes from the database.
 exports.getAllBarcodes = (req, res) => {
   Barcode.findAll()
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving barcodes.",
+      });
+    });
+};
+
+// Retrieve all Barcodes with a serializedAssetId from the database.
+exports.getBarcodeBySerializedAssetId = (req, res) => {
+  Barcode.findAll( { where: { serializedAssetId: req.params.serializedAssetId }} )
     .then((data) => {
       res.status(200).json(data);
     })
