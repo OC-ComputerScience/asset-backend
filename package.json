@@ -7,7 +7,7 @@
     "test": "jest --",
     "start": "node server.js",
     "bundle": "mkdir deploy && cp -r app server.js package.json package-lock.json asset-t1-backend.service .env deploy",
-    "winbundle": "md deploy && xcopy app deploy /s /e /i /h /y && xcopy server.js deploy /s /e /i /h /y && xcopy *.json deploy /s /e /i /h /y && xcopy backend.service deploy /s /e /i /h /y && xcopy .env deploy /s /e /i /h /y",
+    "winbundle": "md deploy && xcopy app deploy /i /y && xcopy server.js deploy /i /y && xcopy *.json deploy /i /y && xcopy backend.service deploy /i /y && xcopy .env deploy /i /h /y",
     "dataInit": "node initializer.js"
   },
   "keywords": [
