@@ -9,7 +9,7 @@ on:
 jobs:
   windows-deploy:
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       DB_HOST: ${{ secrets.DEV_DB_HOST }}
       DB_PW: ${{ secrets.DEV_DB_PW}}
@@ -27,7 +27,7 @@ jobs:
           node-version: "20.11.0"
 
       - run: |
-          touch .env
+          type nul > .env
           echo DB_HOST="$DB_HOST" >> .env
           echo DB_PW="$DB_PW" >> .env
           echo DB_USER="$DB_USER" >> .env
@@ -35,7 +35,7 @@ jobs:
           echo CLIENT_ID ="$CLIENT_ID" >> .env
           echo CLIENT_SECRET = "$CLIENT_SECRET" >> .env
 
-      - run: npm run bundle
+      - run: npm run winbundle
 
       - name: Copy folder content recursively to remote
         uses: garygrossgarten/github-action-scp@release
