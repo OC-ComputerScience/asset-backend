@@ -1,3 +1,4 @@
+const Sequalize = require("sequelize");
 const db = require("../models");
 const PersonAsset = db.personAsset;
 const Person = db.person;
@@ -6,6 +7,7 @@ const AssetProfile = db.assetProfile;
 const AssetType = db.assetType;
 const AssetCategory = db.assetCategory;
 const Op = db.Sequelize.Op;
+
 
 // Create and Save a new PersonAsset
 exports.createPersonAsset = (req, res) => {
@@ -49,6 +51,67 @@ exports.createPersonAsset = (req, res) => {
 // Retrieve all PersonAssets from the database.
 exports.getAllPersonAssets = (req, res) => {
   PersonAsset.findAll({
+    include: [
+      {
+        model: Person,
+        as: "person",
+        attributes: [
+          "personId",
+          "fullName",
+          "fullNameWithId",
+          "fName",
+          "lName",
+          "email",
+          "idNumber",
+          "activeStatus",
+        ],
+      },
+      {
+        model: SerializedAsset,
+        as: "serializedAsset",
+        include: [
+          {
+            // Include AssetProfile here
+            model: AssetProfile,
+            as: "assetProfile",
+            attributes: ["profileId", "profileName", "typeId"],
+          },
+        ],
+        attributes: [
+          "serializedAssetId",
+          "serialNumber",
+          "profileId",
+          "serializedAssetName",
+          "notes",
+          "activeStatus",
+        ],
+      },
+    ],
+  })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving person assets.",
+      });
+    });
+};
+// Retrieve all recent PersonAssets from the database.
+exports.getAllRecentPersonAssets = (req, res) => {
+  PersonAsset.findAll( {
+    where:
+    {
+      [Op.or]: [
+      {checkoutDate: {
+        [Op.gte]: Sequalize.literal("NOW() - INTERVAL '28' DAY")
+      }},
+      {checkinDate: {
+        [Op.gte]: Sequalize.literal("NOW() - INTERVAL '28' DAY")
+      }}
+    ]
+    },
     include: [
       {
         model: Person,
@@ -155,7 +218,7 @@ exports.getPersonAssetById = (req, res) => {
 
 exports.getPersonAssetsByCategoryId = (req, res) => {
   const categoryId = req.params.categoryId;
-
+  console.log("getByCategoryId: categoryId = ", categoryId); 
   PersonAsset.findAll({
     include: [{
         model: Person,
@@ -209,6 +272,74 @@ exports.getPersonAssetsByCategoryId = (req, res) => {
     });
   });
 };
+
+exports.getRecentByCategoryId = (req, res) => {
+  const categoryId = req.params.categoryId;
+  console.log("getRecnetByCategoryId: categoryId = ", categoryId);  
+
+  PersonAsset.findAll({
+
+    include: [{
+        model: Person,
+        as: "person",
+        attributes: [
+          "personId",
+          "fullName",
+          "fullNameWithId",
+          "fName",
+          "lName",
+          "email",
+          "idNumber",
+          "activeStatus",
+        ],
+      },
+      {
+    model: SerializedAsset,
+    as: 'serializedAsset',
+    include: [{
+      model: AssetProfile,
+      as: 'assetProfile',
+      include: [{
+        model: AssetType,
+        as: 'assetType',
+        where: { categoryId: categoryId },
+        attributes: ['typeId'],
+        include: [{
+          model: AssetCategory,
+          as: 'assetCategory',
+          attributes: ['categoryId', 'categoryName', 'desc']
+        }]
+      }]
+    }]
+  }],
+    where: {
+      '$serializedAsset.assetProfile.assetType.categoryId$': categoryId,
+      [Op.or]: [
+        {checkoutDate: {
+          [Op.gte]: Sequalize.literal("NOW() - INTERVAL '28' DAY")
+        }},
+        {checkinDate: {
+          [Op.gte]: Sequalize.literal("NOW() - INTERVAL '28' DAY")
+        }}
+      ]
+    }
+  })
+  .then((profiles) => {
+    if (profiles.length > 0) {
+      res.status(200).json(profiles);
+    } else {
+      res.status(404).send({
+        message: `No personAssets found for categoryId=${categoryId}.`
+      });
+    }
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving PersonAssets by category.",
+    });
+  });
+};
+
 
 
 // Getter function for reminder emails

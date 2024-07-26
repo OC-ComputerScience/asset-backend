@@ -8,7 +8,10 @@ module.exports = (app) => {
   
     // Retrieve all PersonAsset
     router.get("/", [authenticate], personAsset.getAllPersonAssets);
-  
+
+    // Retrieve all rencentPersonAsset
+    router.get("/recent", [authenticate], personAsset.getAllRecentPersonAssets);
+
     // Retrieve a single  PersonAsset by  PersonAssetId
     router.get("/:personAssetId", [authenticate], personAsset.getPersonAssetById);
 
@@ -21,7 +24,9 @@ module.exports = (app) => {
     //Retrieve all asset profiles with categoryId 
     router.get("/byCategoryId/:categoryId", [authenticate], personAsset.getPersonAssetsByCategoryId);
 
-  
+    //Retrieve all recent asset profiles with categoryId 
+    router.get("/byCategoryId/recent/:categoryId", [authenticate], personAsset.getRecentByCategoryId);
+
     // Update a  PersonAsset by  PersonAssetId
     router.put("/:personAssetId", [authenticate], personAsset.updatePersonAsset);
   
