@@ -1,3 +1,4 @@
+const Sequalize = require("sequelize");
 const db = require("../models");
 const BuildingAsset = db.buildingAsset;
 const Building = db.building;
@@ -49,6 +50,58 @@ exports.createBuildingAsset = (req, res) => {
 
 exports.getAllBuildingAssets = (req, res) => {
   BuildingAsset.findAll({
+    include: [
+      {
+        model: Building,
+        as: "building",
+        attributes: ["buildingId", "name", "abbreviation", "activeStatus"],
+      },
+      {
+        model: SerializedAsset,
+        as: "serializedAsset",
+        include: [
+          {
+            // Include AssetProfile here
+            model: AssetProfile,
+            as: "assetProfile",
+            attributes: ["profileId", "profileName", "typeId"],
+          },
+        ],
+        attributes: [
+          "serializedAssetId",
+          "serialNumber",
+          "profileId",
+          "serializedAssetName",
+          "notes",
+          "activeStatus",
+        ],
+      },
+    ],
+  })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while retrieving building assets.",
+      });
+    });
+};
+exports.getRecentBuildingAssets = (req, res) => {
+  BuildingAsset.findAll({
+    where:
+    {
+      [Op.or]: [
+      {checkoutDate: {
+        [Op.gte]: Sequalize.literal("NOW() - INTERVAL '28' DAY")
+      }},
+      {checkinDate: {
+        [Op.gte]: Sequalize.literal("NOW() - INTERVAL '28' DAY")
+      }}
+    ]
+    },
     include: [
       {
         model: Building,
@@ -187,6 +240,59 @@ exports.getBuildingAssetsByCategoryId = (req, res) => {
   });
 };
 
+exports.getRecentByCategoryId = (req, res) => {
+  const categoryId = req.params.categoryId;
+
+  BuildingAsset.findAll({
+    include: [{
+      model: Building,
+      as: "building",
+      attributes: ["buildingId", "name", "abbreviation", "activeStatus"],
+    },{
+    model: SerializedAsset,
+    as: 'serializedAsset',
+    include: [{
+      model: AssetProfile,
+      as: 'assetProfile',
+      include: [{
+        model: AssetType,
+        as: 'assetType',
+        where: { categoryId: categoryId },
+        attributes: ['typeId'],
+        include: [{
+          model: AssetCategory,
+          as: 'assetCategory',
+          attributes: ['categoryId', 'categoryName', 'desc']
+        }]
+      }]
+    }]
+  }],
+    where: {
+      '$serializedAsset.assetProfile.assetType.categoryId$': categoryId,
+      [Op.or]: [
+        {checkoutDate: {
+          [Op.gte]: Sequalize.literal("NOW() - INTERVAL '28' DAY")
+        }},
+        {checkinDate: {
+          [Op.gte]: Sequalize.literal("NOW() - INTERVAL '28' DAY")
+        }}
+      ]
+  }})
+  .then((profiles) => {
+    if (profiles.length > 0) {
+      res.status(200).json(profiles);
+    } else {
+      res.status(404).send({
+        message: `No Building Assets found for categoryId=${categoryId}.`
+      });
+    }
+  })
+  .catch((err) => {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving buildingAssets by category.",
+    });
+  });
+};
 // Update a BuildingAsset by the buildingAssetId in the request
 exports.updateBuildingAsset = (req, res) => {
   const buildingAssetId = req.params.buildingAssetId;
