@@ -57,6 +57,8 @@ exports.createSerializedAsset = (req, res) => {
 
 // Retrieve all SerializedAssets from the database.
 exports.getAllSerializedAssets = (req, res) => {
+  const activeStatus = req.query.activeStatus;
+  const checkoutStatus = req.query.checkoutStatus;
   SerializedAsset.findAll({
     include: [
       {
@@ -73,6 +75,10 @@ exports.getAllSerializedAssets = (req, res) => {
         ],
       },
     ],
+    where: {
+      activeStatus: activeStatus ? activeStatus : [true,false],
+      checkoutStatus: checkoutStatus ? checkoutStatus : [true,false],
+    },
   })
     .then((data) => {
       res.status(200).json(data);
@@ -158,6 +164,8 @@ exports.getSerializedAssetById = (req, res) => {
 
 exports.getSerializedAssetsByCategoryId = (req, res) => {
   const categoryId = req.params.categoryId;
+  const activeStatus = req.query.activeStatus;
+  const checkoutStatus = req.query.checkoutStatus;
 
   SerializedAsset.findAll({
     include: [{
@@ -176,7 +184,9 @@ exports.getSerializedAssetsByCategoryId = (req, res) => {
       }]
     }],
     where: {
-      '$assetProfile.assetType.categoryId$': categoryId
+      '$assetProfile.assetType.categoryId$': categoryId,
+      activeStatus: activeStatus ? activeStatus : [true,false],
+      checkoutStatus: checkoutStatus ? checkoutStatus : [true,false],
     }
   })
   .then((profiles) => {
