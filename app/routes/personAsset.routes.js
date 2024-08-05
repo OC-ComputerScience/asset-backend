@@ -12,20 +12,20 @@ module.exports = (app) => {
     // Retrieve all rencentPersonAsset
     router.get("/recent", [authenticate], personAsset.getAllRecentPersonAssets);
 
-    // Retrieve a single  PersonAsset by  PersonAssetId
-    router.get("/:personAssetId", [authenticate], personAsset.getPersonAssetById);
+    //Retrieve all recent asset profiles with categoryId 
+    router.get("/byCategoryId/recent/:categoryId", [authenticate], personAsset.getRecentByCategoryId);
 
-    /// Retrieve all personAssets with matching serializedAssetId
+    //Retrieve all asset profiles with categoryId 
+    router.get("/byCategoryId/:categoryId", [authenticate], personAsset.getPersonAssetsByCategoryId);
+ 
+    // Retrieve all personAssets with matching serializedAssetId
     router.get("/bySerializedAsset/:serializedAssetId", [authenticate], personAsset.getPersonAssetsBySerializedAssetId);
 
     // Retrieve all personAssets check-in dates for reminder email
     router.get("/byCheckinDate/reminders", [authenticate], personAsset.getPersonAssetForReminder);
-
-    //Retrieve all asset profiles with categoryId 
-    router.get("/byCategoryId/:categoryId", [authenticate], personAsset.getPersonAssetsByCategoryId);
-
-    //Retrieve all recent asset profiles with categoryId 
-    router.get("/byCategoryId/recent/:categoryId", [authenticate], personAsset.getRecentByCategoryId);
+       
+    // Retrieve a single  PersonAsset by  PersonAssetId
+      router.get("/:personAssetId", [authenticate], personAsset.getPersonAssetById);
 
     // Update a  PersonAsset by  PersonAssetId
     router.put("/:personAssetId", [authenticate], personAsset.updatePersonAsset);
