@@ -206,7 +206,7 @@ exports.updateSerializedAsset = (req, res) => {
     where: { serializedAssetId: serializedAssetId },
   })
     .then((num) => {
-      if (num == 1) {
+      if (num[0] == 1) {
         res.status(200).send({
           message: "SerializedAsset was updated successfully.",
         });
@@ -233,7 +233,7 @@ exports.deleteSerializedAsset = (req, res) => {
     where: { serializedAssetId: serializedAssetId },
   })
     .then((num) => {
-      if (num == 1) {
+      if (num[0] == 1) {
         res.status(200).send({
           message: "SerializedAsset was deleted successfully!",
         });
