@@ -12,17 +12,18 @@ module.exports = (app) => {
     // Retrieve recent BuildingAssets
     router.get("/recent", [authenticate], buildingAsset.getRecentBuildingAssets);
   
-    // Retrieve a single BuildingAsset by buildingAssetId
-    router.get("/:buildingAssetId", [authenticate], buildingAsset.getBuildingAssetById);
-
     // Retrieve all buildingAssets with matching serializedAssetId
     router.get("/bySerializedAsset/:serializedAssetId", [authenticate], buildingAsset.getBuildingAssetsBySerializedAssetId);
+
+    //Retrieve recent building assets with categoryId 
+    router.get("/byCategoryId/recent/:categoryId", [authenticate], buildingAsset.getRecentByCategoryId);
 
     //Retrieve all building assets with categoryId 
     router.get("/byCategoryId/:categoryId", [authenticate], buildingAsset.getBuildingAssetsByCategoryId);
 
-    //Retrieve recent building assets with categoryId 
-    router.get("/byCategoryId/recent/:categoryId", [authenticate], buildingAsset.getRecentByCategoryId);
+
+    // Retrieve a single BuildingAsset by buildingAssetId
+    router.get("/:buildingAssetId", [authenticate], buildingAsset.getBuildingAssetById);
 
     // Update a BuildingAsset by buildingAssetId
     router.put("/:buildingAssetId", [authenticate], buildingAsset.updateBuildingAsset);

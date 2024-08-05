@@ -11,18 +11,18 @@ module.exports = (app) => {
 
     // Retrieve recent RoomAssets
     router.get("/recent", [authenticate], roomAsset.getRecentRoomAssets);
-  
-    // Retrieve a single RoomAsset by roomAssetId
-    router.get("/:roomAssetId", [authenticate], roomAsset.getRoomAssetById);
 
     // Retrieve all roomAssets with matching serializedAssetId
     router.get("/bySerializedAsset/:serializedAssetId", [authenticate], roomAsset.getRoomAssetsBySerializedAssetId);
 
+    //Retrieve recent room assets with categoryId 
+    router.get("/byCategoryId/recent/:categoryId", [authenticate], roomAsset.getRecentByCategoryId);
+
     //Retrieve all room assets with categoryId 
     router.get("/byCategoryId/:categoryId", [authenticate], roomAsset.getRoomAssetsByCategoryId);
 
-   //Retrieve recent room assets with categoryId 
-   router.get("/byCategoryId/recent/:categoryId", [authenticate], roomAsset.getRecentByCategoryId);
+    // Retrieve a single RoomAsset by roomAssetId
+    router.get("/:roomAssetId", [authenticate], roomAsset.getRoomAssetById);
 
     // Update a RoomAsset by roomAssetId
     router.put("/:roomAssetId", [authenticate], roomAsset.updateRoomAsset);
