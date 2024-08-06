@@ -50,7 +50,11 @@ exports.createPersonAsset = (req, res) => {
 
 // Retrieve all PersonAssets from the database.
 exports.getAllPersonAssets = (req, res) => {
+  const checkedOut = req.query.checkedOut;
+  const checkedOutWhere = checkedOut ? { checkoutStatus: true } : {};
+  console.log("checkedOutWhere: ", checkedOutWhere);
   PersonAsset.findAll({
+    where: checkedOutWhere,
     include: [
       {
         model: Person,
@@ -77,6 +81,7 @@ exports.getAllPersonAssets = (req, res) => {
             attributes: ["profileId", "profileName", "typeId"],
           },
         ],
+       
         attributes: [
           "serializedAssetId",
           "serialNumber",

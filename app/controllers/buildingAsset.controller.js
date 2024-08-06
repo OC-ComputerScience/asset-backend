@@ -49,7 +49,11 @@ exports.createBuildingAsset = (req, res) => {
 };
 
 exports.getAllBuildingAssets = (req, res) => {
+  const checkedOut = req.query.checkedOut;
+  const checkedOutWhere = checkedOut ? { checkoutStatus: true } : {};
+
   BuildingAsset.findAll({
+    where: checkedOutWhere,
     include: [
       {
         model: Building,
@@ -67,6 +71,7 @@ exports.getAllBuildingAssets = (req, res) => {
             attributes: ["profileId", "profileName", "typeId"],
           },
         ],
+        
         attributes: [
           "serializedAssetId",
           "serialNumber",
