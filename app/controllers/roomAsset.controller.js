@@ -50,7 +50,10 @@ exports.createRoomAsset = (req, res) => {
 
 // Retrieve all RoomAssets from the database.
 exports.getAllRoomAssets = (req, res) => {
+  const checkedOut = req.query.checkedOut;
+  const checkedOutWhere = checkedOut ? { checkoutStatus: true } : {};
   RoomAsset.findAll({
+    where: checkedOutWhere,
     include: [
       {
         model: Room,
@@ -63,6 +66,7 @@ exports.getAllRoomAssets = (req, res) => {
             attributes: ["buildingId", "abbreviation"],
           },
         ],
+       
         attributes: [
           "roomId",
           "roomNo",

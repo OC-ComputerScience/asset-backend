@@ -216,6 +216,7 @@ exports.updateSerializedAsset = (req, res) => {
     where: { serializedAssetId: serializedAssetId },
   })
     .then((num) => {
+      console.log(num);
       if (num[0] == 1) {
         res.status(200).send({
           message: "SerializedAsset was updated successfully.",
