@@ -45,10 +45,7 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      constructionType: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
+
       buildingValue: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: true,
