@@ -19,7 +19,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       function: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       yearBuilt: {
         type: Sequelize.INTEGER,
@@ -47,7 +47,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       fireSmokeNotes: {
         type: Sequelize.STRING(255),
-        allowNull: false,
+        allowNull: true,
       },
       constructionType: {
         type: Sequelize.STRING,
@@ -68,7 +68,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       renovationNotes: {
         type: Sequelize.STRING(255),
-        allowNull: false,
+        allowNull: true,
       },
 
       activeStatus: {

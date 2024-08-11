@@ -34,7 +34,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         // Note: Since it's a virtual field, no setter is defined
       },
-      roomDescripiton: {
+      roomDescription: {
         type: Sequelize.STRING,
         allowNull: true,
       },
