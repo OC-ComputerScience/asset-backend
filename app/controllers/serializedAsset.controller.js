@@ -205,6 +205,85 @@ exports.getSerializedAssetsByCategoryId = (req, res) => {
   });
 };
 
+exports.searchSerializedAssets = async(req, res) => {
+  const typeId = req.query.typeId;
+  const profileId = req.query.profileId;
+  const searchKey = req.query.searchKey;
+  let where = [];
+  let data;
+
+  if(typeId){
+    where.push({typeId: typeId})
+  }
+  if(profileId){
+    where.push({profileId: profileId})
+  }
+  
+  try{
+    if(searchKey){
+      data = await findAssetsBySerialNumber(where, searchKey);
+      if(!data){
+        data = await findAssetsByBarcode(where, searchKey);
+      } 
+    }
+    else {
+      data = await findAssetsByFilter(where);
+    }
+    if(data){
+      res.send(data);
+    }
+    else{
+      res.status(404).send({
+        message: "Could not find asset matching any filters"
+      })
+    }
+  }
+  catch(err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving asset(s)"
+    })
+  }
+};
+
+const findAssetsByFilter = async(where) => {
+  const data = await SerializedAsset.findAll({
+    include: [{
+      model: AssetProfile,
+      where: { [Op.and]: where }
+    }]
+  })
+  return data;
+}
+
+const findAssetsBySerialNumber = async(where, searchKey) => {
+  const data = await SerializedAsset.findAll({
+    include: [{
+      model: AssetProfile,
+      where: { [Op.and]: where }
+    }],
+    where: [{serialNumber: searchKey}]
+  });
+
+  return data ?? null;
+};
+
+const findAssetsByBarcode = async(where, searchKey) => {
+  const data = await SerializedAsset.findAll({
+    include: [
+      {
+        model: AssetProfile,
+        where: { [Op.and]: where }
+      },
+      {
+        model: db.barcode,
+        required: true,
+        where: [{barcode: searchKey}]
+      }
+    ]
+  });
+  return data;
+};
+
 
 
 
