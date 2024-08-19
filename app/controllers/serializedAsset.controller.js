@@ -4,6 +4,7 @@ const AssetCategory = db.assetCategory;
 const AssetType = db.assetType;
 const AssetProfile = db.assetProfile;
 const SerializedAsset = db.serializedAsset;
+const Op = db.Sequelize.Op;
 
 // Create and Save a new SerializedAsset
 exports.createSerializedAsset = (req, res) => {
@@ -222,14 +223,14 @@ exports.searchSerializedAssets = async(req, res) => {
   try{
     if(searchKey){
       data = await findAssetsBySerialNumber(where, searchKey);
-      if(!data){
+      if(data.length < 1){
         data = await findAssetsByBarcode(where, searchKey);
       } 
     }
     else {
       data = await findAssetsByFilter(where);
     }
-    if(data){
+    if(data.length > 0){
       res.send(data);
     }
     else{
