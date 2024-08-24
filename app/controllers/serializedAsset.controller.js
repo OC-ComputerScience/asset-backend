@@ -210,25 +210,32 @@ exports.searchSerializedAssets = async(req, res) => {
   const typeId = req.query.typeId;
   const profileId = req.query.profileId;
   const searchKey = req.query.searchKey;
-  let where = [];
+  const activeStatus = req.query.showArchived == 'false' ? true : false;
+  const categoryId = req.query.categoryId;
+  
+  let where = {};
+  let statusCheck = {};
   let data;
 
   if(typeId){
-    where.push({typeId: typeId})
+    where.typeId = typeId
   }
   if(profileId){
-    where.push({profileId: profileId})
+    where.profileId = profileId
+  }
+  if(activeStatus){
+    statusCheck.activeStatus = true;
   }
   
   try{
     if(searchKey){
-      data = await findAssetsBySerialNumber(where, searchKey);
+      data = await findAssetsBySerialNumber(where, searchKey, statusCheck, categoryId);
       if(data.length < 1){
-        data = await findAssetsByBarcode(where, searchKey);
+        data = await findAssetsByBarcode(where, searchKey, statusCheck, categoryId);
       } 
     }
     else {
-      data = await findAssetsByFilter(where);
+      data = await findAssetsByFilter(where, statusCheck, categoryId);
     }
     if(data.length > 0){
       res.send(data);
@@ -246,41 +253,58 @@ exports.searchSerializedAssets = async(req, res) => {
   }
 };
 
-const findAssetsByFilter = async(where) => {
+const findAssetsByFilter = async(where, statusCheck, categoryId) => {
+  let category = categoryId ? {categoryId: categoryId} : {}
   const data = await SerializedAsset.findAll({
     include: [{
       model: AssetProfile,
-      where: { [Op.and]: where }
-    }]
+      where: { [Op.and]: where },
+      include: [{
+        model: AssetType,
+        where: category
+      }]
+    }],
+    where: statusCheck
   })
   return data;
 }
 
-const findAssetsBySerialNumber = async(where, searchKey) => {
+const findAssetsBySerialNumber = async(where, searchKey, statusCheck, categoryId) => {
+  let category = categoryId ? {categoryId: categoryId} : {}
   const data = await SerializedAsset.findAll({
     include: [{
       model: AssetProfile,
-      where: { [Op.and]: where }
+      where: { [Op.and]: where },
+      include: [{
+        model: AssetType,
+        where: category
+      }]
     }],
-    where: [{serialNumber: searchKey}]
+    where: [{serialNumber: searchKey}, statusCheck]
   });
 
   return data ?? null;
 };
 
-const findAssetsByBarcode = async(where, searchKey) => {
+const findAssetsByBarcode = async(where, searchKey, statusCheck, categoryId) => {
+  let category = categoryId ? {categoryId: categoryId} : {}
   const data = await SerializedAsset.findAll({
     include: [
       {
         model: AssetProfile,
-        where: { [Op.and]: where }
+        where: { [Op.and]: where },
+        include: [{
+          model: AssetType,
+          where: category
+        }]
       },
       {
         model: db.barcode,
         required: true,
         where: [{barcode: searchKey}]
       }
-    ]
+    ],
+    where: statusCheck
   });
   return data;
 };
