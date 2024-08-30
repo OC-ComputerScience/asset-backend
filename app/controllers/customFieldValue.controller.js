@@ -80,7 +80,8 @@ exports.findAllForField = async(req, res) => {
     const fieldId = req.params.fieldId;
     try{
         const data = await CustomFieldValue.findAll({
-            where: {customFieldId: fieldId}
+            where: {customFieldId: fieldId},
+            order: [['value', 'ASC']]
         });
         res.send(data);
     }

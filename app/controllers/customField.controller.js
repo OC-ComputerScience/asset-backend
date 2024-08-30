@@ -28,7 +28,8 @@ exports.findAll = async(req, res) => {
     var condition = id ? {id: {[Op.like]: `%${id}%`}} : null;
     try{
         const data = await CustomField.findAll({
-            where: condition
+            where: condition,
+            order: [['name', 'ASC']]
         })
         res.send(data);
     }
