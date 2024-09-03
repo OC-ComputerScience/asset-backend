@@ -70,7 +70,7 @@ db.sequelize
     // await initializeProfileData();
     await initializeReports();
     await initializeLogs();
-    await initializeWarranties();
+    // await initializeWarranties();
     await initializeLeases();
 
     console.log("All initializations completed successfully.");

@@ -33,6 +33,7 @@ exports.createRoomAsset = (req, res) => {
     expectedCheckinDate: req.body.expectedCheckinDate,
     checkoutStatus: req.body.checkoutStatus,
     checkedOutBy: req.body.checkedOutBy,
+    checkoutNote: req.body.checkoutNote ?? null
   };
 
   // Save RoomAsset in the database
