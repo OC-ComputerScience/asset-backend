@@ -1,5 +1,3 @@
-const auth = require("../authorization/authorization.js");
-
 module.exports = (app) => {
     const personAsset = require("../controllers/personAsset.controller.js");
     const buildingAsset = require("../controllers/buildingAsset.controller.js");
@@ -33,5 +31,5 @@ module.exports = (app) => {
     router.put("/buildings/:id", [authenticate], buildingAsset.updateBuildingAsset);
     router.put("/rooms/:id", [authenticate], roomAsset.updateRoomAsset);
 
-    app.use("/asset-t1/assignment");
+    app.use("/asset-t1/assignment", router);
 }
