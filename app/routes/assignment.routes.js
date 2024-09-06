@@ -35,9 +35,9 @@ module.exports = (app) => {
     router.get("/rooms/:id", [authenticate], roomAsset.getRoomAssetById);
 
     // Update
-    router.put("/people/:id", [authenticate], personAsset.updatePersonAsset);
-    router.put("/buildings/:id", [authenticate], buildingAsset.updateBuildingAsset);
-    router.put("/rooms/:id", [authenticate], roomAsset.updateRoomAsset);
+    router.put("/people/:personAssetId", [authenticate], personAsset.updatePersonAsset);
+    router.put("/buildings/:buildingAssetId", [authenticate], buildingAsset.updateBuildingAsset);
+    router.put("/rooms/:roomAssetId", [authenticate], roomAsset.updateRoomAsset);
 
     app.use("/asset-t1/assignment", router);
 }
