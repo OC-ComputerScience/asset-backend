@@ -2,6 +2,9 @@ module.exports = (app) => {
     const personAsset = require("../controllers/personAsset.controller.js");
     const buildingAsset = require("../controllers/buildingAsset.controller.js");
     const roomAsset = require("../controllers/roomAsset.controller.js");
+    const person = require("../controllers/person.controller.js");
+    const building = require("../controllers/building.controller.js");
+    const room = require("../controllers/room.controller.js");
 
     const {authenticate} = require("../authorization/authorization.js");
     const router = require("express").Router();
@@ -20,6 +23,11 @@ module.exports = (app) => {
     router.get("/people/category/:categoryId", [authenticate], personAsset.getRecentByCategoryId);
     router.get("/buildings/category/:categoryId", [authenticate], buildingAsset.getRecentByCategoryId);
     router.get("/rooms/category/:categoryId", [authenticate], roomAsset.getRecentByCategoryId);
+
+    // Get Assignees
+    router.get("/assignee/people", [authenticate], person.getAllPersons);
+    router.get("/assignee/buildings", [authenticate], building.findAll);
+    router.get("/assignee/rooms", [authenticate], room.getAllRooms);
 
     // Get One
     router.get("/people/:id", [authenticate], personAsset.getPersonAssetById);
