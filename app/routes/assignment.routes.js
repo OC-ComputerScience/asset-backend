@@ -14,10 +14,14 @@ module.exports = (app) => {
     router.post("/buildings", [authenticate], buildingAsset.createBuildingAsset);
     router.post("/rooms", [authenticate], roomAsset.createRoomAsset);
 
+    router.get("/people", [authenticate], personAsset.getAllPersonAssets);
+    router.get("/buildings", [authenticate], buildingAsset.getAllBuildingAssets);
+    router.get("/rooms", [authenticate], roomAsset.getAllRoomAssets);
+
     // Get Recent
-    router.get("/people", [authenticate], personAsset.getAllRecentPersonAssets);
-    router.get("/buildings", [authenticate], buildingAsset.getRecentBuildingAssets);
-    router.get("/rooms", [authenticate], roomAsset.getRecentRoomAssets);
+    router.get("/people/recent", [authenticate], personAsset.getAllRecentPersonAssets);
+    router.get("/buildings/recent", [authenticate], buildingAsset.getRecentBuildingAssets);
+    router.get("/rooms/recent", [authenticate], roomAsset.getRecentRoomAssets);
 
     // Get Recent by Category
     router.get("/people/category/:categoryId", [authenticate], personAsset.getRecentByCategoryId);
