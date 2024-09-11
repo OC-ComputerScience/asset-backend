@@ -70,7 +70,7 @@ db.sequelize
     // await initializeProfileData();
     await initializeReports();
     await initializeLogs();
-    await initializeWarranties();
+    // await initializeWarranties();
     await initializeLeases();
 
     console.log("All initializations completed successfully.");
@@ -105,7 +105,7 @@ require("./app/routes/email.routes")(app);
 require("./app/routes/customField.routes.js")(app);
 require("./app/routes/customFieldValue.routes.js")(app);
 require("./app/routes/customFieldType.routes.js")(app);
-
+require("./app/routes/assignment.routes.js")(app);
 
 // Start email scheduling script
 scheduleCronJob();

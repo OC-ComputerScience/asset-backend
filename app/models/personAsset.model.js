@@ -49,6 +49,14 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      checkoutNote: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+      checkinNote: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      }
     },
     {
       freezeTableName: true,
