@@ -143,6 +143,11 @@ exports.getSerializedAssetById = (req, res) => {
           "activeStatus",
         ],
       },
+      {
+        model: db.barcode,
+        as: "barcodes",
+        required: false
+      }
     ],
   })
     .then((data) => {
