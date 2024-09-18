@@ -346,6 +346,56 @@ exports.getRecentByCategoryId = (req, res) => {
   });
 };
 
+exports.getByPersonId = async(req, res) => {
+  const personId = req.params.personId;
+  try{
+    const data = await PersonAsset.findAll({
+      where: {personId: personId},
+      include: [
+        {
+          model: Person,
+          as: "person",
+          attributes: [
+            "personId",
+            "fullName",
+            "fullNameWithId",
+            "fName",
+            "lName",
+            "email",
+            "idNumber",
+            "activeStatus",
+          ],
+        },
+        {
+          model: SerializedAsset,
+          as: "serializedAsset",
+          include: [
+            {
+              model: AssetProfile,
+              as: "assetProfile",
+              attributes: ["profileId", "profileName", "typeId"],
+            },
+          ],
+          attributes: [
+            "serializedAssetId",
+            "serialNumber",
+            "profileId",
+            "serializedAssetName",
+            "notes",
+            "activeStatus",
+          ],
+        },
+      ],
+    })
+    res.send(data);
+  }
+  catch(err){
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving assets"
+  })
+  }
+}
+
 
 
 // Getter function for reminder emails
