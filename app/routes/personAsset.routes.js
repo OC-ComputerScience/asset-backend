@@ -1,3 +1,4 @@
+
 module.exports = (app) => {
     const personAsset = require("../controllers/personAsset.controller.js");
     const { authenticate } = require("../authorization/authorization.js");
@@ -26,6 +27,8 @@ module.exports = (app) => {
        
     // Retrieve a single  PersonAsset by  PersonAssetId
       router.get("/:personAssetId", [authenticate], personAsset.getPersonAssetById);
+
+    router.get("/person/:personId", [authenticate], personAsset.getByPersonId);
 
     // Update a  PersonAsset by  PersonAssetId
     router.put("/:personAssetId", [authenticate], personAsset.updatePersonAsset);
