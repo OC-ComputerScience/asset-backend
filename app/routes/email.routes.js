@@ -56,7 +56,7 @@ module.exports = (app) => {
             const result = await emailSender.confirmCheckInEmail(emailDetails, assetDetails)
             res.status(200).send(result)
         } catch (error) {
-            console.error(error)
+            console.log(error)
             res.status(500).send("error sending confirmation email")
         }
     })
