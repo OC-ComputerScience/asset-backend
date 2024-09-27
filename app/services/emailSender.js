@@ -118,7 +118,7 @@ async function confirmCheckOutEmail(emailDetails, assetDetails) {
       html: emailContent
     }
 
-   // const info = await transporter.sendMail(mailOptions)
+    const info = await transporter.sendMail(mailOptions)
     console.log('Confirm CheckOut email sent: ' + info.response)
 
     return 'Email sent successfully.'
@@ -141,7 +141,7 @@ async function confirmCheckInEmail(emailDetails, assetDetails) {
       `
     }
 
-  //  const info = await transporter.sendMail(mailOptions)
+    const info = await transporter.sendMail(mailOptions)
     console.log('Confirm CheckIn email: ' + info.response)
 
     return 'Email sent successfully.'
