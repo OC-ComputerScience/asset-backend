@@ -125,8 +125,6 @@ async function checkinReminderEmail(emailDetails, assetDetails) {
 }
 
 module.exports = {
-  sendEmail,
-  adminNotification,
   confirmCheckOutEmail,
   checkinReminderEmail,
   confirmCheckInEmail,
