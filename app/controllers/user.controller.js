@@ -20,8 +20,6 @@ exports.create = (req, res) => {
     email: req.body.email,
     userRoleId: req.body.userRoleId,
     devPermission: req.body.devPermission,
-    // refresh_token: req.body.refresh_token,
-    // expiration_date: req.body.expiration_date
   };
   // Save User in the database
   User.create(user)
@@ -94,9 +92,6 @@ exports.findByEmail = (req, res) => {
         res.send(data);
       } else {
         res.send({ email: "not found" });
-        /*res.status(404).send({
-          message: `Cannot find User with email=${email}.`
-        });*/
       }
     })
     .catch((err) => {

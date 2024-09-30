@@ -411,11 +411,9 @@ exports.getBuildingAssetsBySerializedAssetId = (req, res) => {
   })
 
   .then((data) => {
-    console.log("Building asset controller received serializedAssetId: " + serializedAssetId);
     res.status(200).json(data); // Always return 200 status with the data, even if it's an empty array
   })
   .catch((err) => {
-    console.error("Error retrieving BuildingAssets with serializedAssetId=" + serializedAssetId, err);
     res.status(500).send({
       message: "Error retrieving BuildingAssets with serializedAssetId=" + serializedAssetId,
     });

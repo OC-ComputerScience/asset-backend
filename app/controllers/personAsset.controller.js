@@ -53,7 +53,6 @@ exports.createPersonAsset = (req, res) => {
 exports.getAllPersonAssets = (req, res) => {
   const checkedOut = req.query.checkedOut;
   const checkedOutWhere = checkedOut ? { checkoutStatus: true } : {};
-  console.log("checkedOutWhere: ", checkedOutWhere);
   PersonAsset.findAll({
     where: checkedOutWhere,
     include: [
@@ -224,7 +223,6 @@ exports.getPersonAssetById = (req, res) => {
 
 exports.getPersonAssetsByCategoryId = (req, res) => {
   const categoryId = req.params.categoryId;
-  console.log("getByCategoryId: categoryId = ", categoryId); 
   PersonAsset.findAll({
     include: [{
         model: Person,
@@ -281,7 +279,6 @@ exports.getPersonAssetsByCategoryId = (req, res) => {
 
 exports.getRecentByCategoryId = (req, res) => {
   const categoryId = req.params.categoryId;
-  console.log("getRecnetByCategoryId: categoryId = ", categoryId);  
 
   PersonAsset.findAll({
 
