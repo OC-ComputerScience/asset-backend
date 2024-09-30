@@ -82,7 +82,6 @@ exports.getOCPersonById = (req, res) => {
       res.status(500).send({
         message: "Error retrieving Person with personId=" + personId,
       });
-      console.log(error);
     })
 
 };
@@ -102,7 +101,6 @@ exports.getOCPersonByEmail = (req, res) => {
       res.status(404).send({
         message: "Error retrieving Person with email=" + email,
       });
-      console.log(error);
     })
 
 };

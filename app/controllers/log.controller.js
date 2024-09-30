@@ -121,7 +121,6 @@ exports.getLogById = (req, res) => {
 // Retrieve all Logs with a specific serializedAssetId
 exports.getLogsBySerializedAssetId = (req, res) => {
   const serializedAssetId = req.params.serializedAssetId;
-  console.log("Log controller recieved serializedAssetId: " + serializedAssetId)
 
   Log.findAll({ where: { serializedAssetId: serializedAssetId } })
     .then((data) => {
