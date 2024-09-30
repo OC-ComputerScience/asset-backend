@@ -8,7 +8,7 @@ const db = require("./app/models");
 const scheduleCronJob = require('./app//services/cronMail');
 
 var corsOptions = {
-  origin: ["http://localhost:8081", "https://asset.eaglesoftwareteam.com"],
+  origin: ["http://localhost:8081", "https://asset.eaglesoftwareteam.com", "https://assetdev.oc.edu"],
 };
 
 app.use(cors(corsOptions));
