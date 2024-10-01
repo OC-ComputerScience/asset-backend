@@ -408,6 +408,60 @@ exports.getPersonAssetForReminder = () => {
         expectedCheckinDate: {
           [Op.between]: [today, daysFromDue],
         },
+        checkoutStatus: true
+      },
+      include: [
+        {
+          model: Person,
+          as: "person",
+          attributes: [
+            "personId",
+            "fName",
+            "lName",
+            "email",
+            "idNumber",
+            "activeStatus",
+          ],
+        },
+        {
+          model: SerializedAsset,
+          as: "serializedAsset",
+          include: [
+            {
+              model: AssetProfile,
+              as: "assetProfile",
+              attributes: ["profileId", "profileName", "typeId"],
+            },
+          ],
+          attributes: [
+            "serializedAssetId",
+            "serialNumber",
+            "profileId",
+            "serializedAssetName",
+            "notes",
+            "activeStatus",
+          ],
+        },
+      ],
+    })
+      .then((data) => {
+        resolve(data);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+exports.getOverdueAssets = () => {
+  return new Promise((resolve, reject) => {
+    const today = new Date();
+    PersonAsset.findAll({
+      where: {
+        expectedCheckinDate: {
+          [Op.between]: [today, expectedCheckinDate],
+        },
+        checkoutStatus: true
       },
       include: [
         {

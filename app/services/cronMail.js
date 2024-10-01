@@ -13,8 +13,9 @@ function scheduleCronJob() {
         try {
             // Get all personAssets with expectedCheckinDate 2-3 days away from today
             const assetsToRemind = await personAsset.getPersonAssetForReminder()
+            const overdueAssets = await personAsset.getOverdueAssets();
     
-            if (!assetsToRemind || assetsToRemind.length == 0) {
+            if ((!assetsToRemind || assetsToRemind.length == 0) && (!overdueAssets || overdueAssets.length == 0)) {
                 console.log("No assets are due in the next 3 days")
                 return
             }
@@ -37,6 +38,27 @@ function scheduleCronJob() {
 
                 // Send reminder email
                 await emailSender.checkinReminderEmail(emailDetails, assetDetails)
+
+                console.log(`Reminder email sent for personAssetId: ${asset.personAssetId}`)
+            }
+
+            for (const asset of overdueAssets) {
+                console.log('Asset:', asset.serializedAsset.serializedAssetName)
+
+                // Construct person object
+                const emailDetails = {
+                    fullName: asset.person.fName + ' ' + asset.person.lName +
+                    ' (' + asset.person.idNumber + ')',
+                    to: asset.person.email
+                }
+
+                const assetDetails = {
+                    expectedCheckinDate: asset.expectedCheckinDate,
+                    serializedAssetName: asset.serializedAsset?.serializedAssetName
+                }
+
+                // Send reminder email
+                await emailSender.overdueAssetEmail(emailDetails, assetDetails)
 
                 console.log(`Reminder email sent for personAssetId: ${asset.personAssetId}`)
             }

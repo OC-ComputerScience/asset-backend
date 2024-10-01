@@ -124,9 +124,46 @@ async function checkinReminderEmail(emailDetails, assetDetails) {
   }
 }
 
+async function overdueAssetEmail(emailDetails, assetDetails) {
+  const checkInDate = assetDetails.expectedCheckinDate
+
+  if (checkInDate.getDay() == 0) {
+    checkInDate.setDate(checkInDate.getDate() + 1)
+  } else if (checkInDate.getDay() == 6) {
+    checkInDate.setDate(checkInDate.getDate() + 2)
+  }
+
+  const formattedDate = checkInDate.toDateString()
+
+  try {
+    // Configure the email data
+    const mailOptions = {
+      from: 'supportcentral@oc.edu',
+      to: emailDetails.to,
+      subject: `${assetDetails.serializedAssetName} is due soon`,
+      html: `<p>Hello, ${emailDetails.fullName}</p>
+      <p>This is a reminder that an item checked out to you - ${assetDetails.serializedAssetName} - is overdue. </p>
+      <p>It was due on: ${formattedDate}</p>
+      <p>Please bring this item to Support Central as soon as possible to get it checked in</p>
+      <img src="https://ddtjogezxr16i.cloudfront.net/images/email/oc-logo-email-75.png" alt="Oklahoma Christian University" width="150" height="150" style="font-family:sofia-pro;font-size:17px;font-weight:600;margin:0px;padding:0px;display:block;width:150px;height:150px">
+      `
+    }
+
+
+   const info = await transporter.sendMail(mailOptions)
+    console.log('Email sent: ' + info.response)
+
+    return 'Reminder email sent successfully.'
+  } catch (error) {
+    console.error(error)
+    throw 'Email could not be sent.'
+  }
+}
+
 module.exports = {
   confirmCheckOutEmail,
   checkinReminderEmail,
   confirmCheckInEmail,
-  checkinNotification
+  checkinNotification,
+  overdueAssetEmail
 }
