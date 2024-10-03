@@ -5,7 +5,6 @@ const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const app = express();
 const db = require("./app/models");
-const scheduleCronJob = require('./app//services/cronMail');
 
 var corsOptions = {
   origin: ["http://localhost:8081", "https://asset.eaglesoftwareteam.com", "https://assetdev.oc.edu"],
@@ -58,9 +57,6 @@ require("./app/routes/customField.routes.js")(app);
 require("./app/routes/customFieldValue.routes.js")(app);
 require("./app/routes/customFieldType.routes.js")(app);
 require("./app/routes/assignment.routes.js")(app);
-
-// Start email scheduling script
-scheduleCronJob();
 
 // Simple route
 app.get("/", (_req, res) => {
