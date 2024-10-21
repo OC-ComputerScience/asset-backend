@@ -60,6 +60,9 @@ exports.createSerializedAsset = (req, res) => {
 exports.getAllSerializedAssets = (req, res) => {
   const activeStatus = req.query.activeStatus;
   const checkoutStatus = req.query.checkoutStatus;
+  let where = {}
+  if(activeStatus) where.activeStatus = (activeStatus === 'true')
+  if(checkoutStatus) where.checkoutStatus = (checkoutStatus === 'true')
   SerializedAsset.findAll({
     include: [
       {
@@ -76,10 +79,7 @@ exports.getAllSerializedAssets = (req, res) => {
         ],
       },
     ],
-    where: {
-      activeStatus: activeStatus ? activeStatus : [true,false],
-      checkoutStatus: checkoutStatus ? checkoutStatus : [true,false],
-    },
+    where: where
   })
     .then((data) => {
       res.status(200).json(data);
