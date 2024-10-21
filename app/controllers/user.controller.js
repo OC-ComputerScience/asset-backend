@@ -44,7 +44,7 @@ exports.findAll = (req, res) => {
       {
         model: db.userUserRole,
         as: "userUserRoles",
-        required: true,
+        required: false,
         include: [
           {
             model: db.userRole,
