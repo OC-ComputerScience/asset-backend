@@ -57,6 +57,7 @@ require("./app/routes/customField.routes.js")(app);
 require("./app/routes/customFieldValue.routes.js")(app);
 require("./app/routes/customFieldType.routes.js")(app);
 require("./app/routes/assignment.routes.js")(app);
+require("./app/routes/userUserRole.routes.js")(app)
 
 // Simple route
 app.get("/", (_req, res) => {

@@ -42,8 +42,19 @@ exports.findAll = (req, res) => {
     where: condition,
     include: [
       {
-        model: UserRole,
-        as: "userRole",
+        model: db.userUserRole,
+        as: "userUserRoles",
+        required: false,
+        include: [
+          {
+            model: db.userRole,
+            attributes: [
+              "id",
+              "name",
+              "categoryId"
+            ]
+          }
+        ]
       },
     ],
   })
@@ -61,7 +72,16 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  User.findByPk(id)
+  User.findByPk(id, {
+    include: [
+      {
+        model: db.userUserRole,
+        as: "userUserRoles",
+        required: true,
+        include: [{model: db.userRole}]
+      },
+    ]
+  })
     .then((data) => {
       if (data) {
         res.send(data);
@@ -72,6 +92,7 @@ exports.findOne = (req, res) => {
       }
     })
     .catch((err) => {
+      console.log(err)
       res.status(500).send({
         message: "Error retrieving User with id=" + id,
       });

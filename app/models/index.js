@@ -18,6 +18,7 @@ const cascade = 'CASCADE';
 
 db.assetCategory = require("./assetCategory.model.js")(sequelize, Sequelize);
 db.userRole = require("./userRole.model.js")(sequelize, Sequelize);
+db.userUserRole = require("./userUserRole.model.js")(sequelize, Sequelize);
 db.user = require("./user.model.js")(sequelize, Sequelize);
 db.session = require("./session.model.js")(sequelize, Sequelize);
 db.assetType = require("./assetType.model.js")(sequelize, Sequelize);
@@ -40,14 +41,25 @@ db.customField = require("./customField.model.js")(sequelize, Sequelize);
 db.customFieldType = require("./customFieldType.model.js")(sequelize, Sequelize);
 db.customFieldValue = require("./customFieldValue.model.js")(sequelize, Sequelize);
 // User and UserRole
-db.userRole.hasMany(db.user, {
+db.userRole.hasMany(db.userUserRole, {
   foreignKey: "userRoleId",
   onDelete: "SET NULL",
 });
-db.user.belongsTo(db.userRole, {
+db.userUserRole.belongsTo(db.userRole, {
   foreignKey: "userRoleId",
   onDelete: "SET NULL",
 });
+
+db.user.hasMany(db.userUserRole, {
+  foreignKey: "userId",
+  onDelete: "SET NULL",
+})
+db.userUserRole.belongsTo(db.user, {
+  foreignKey: "userId",
+  onDelete: "SET NULL"
+})
+
+
 
 // AssetCategory and UserRole
 db.assetCategory.hasOne(db.userRole, {
