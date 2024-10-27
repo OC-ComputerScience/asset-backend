@@ -7,7 +7,8 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Log
 exports.createLog = (req, res) => {
   // Validate request
-  if (!req.body.serializedAssetId || !req.body.serviceDate) {
+  if (!req.body.serializedAssetId || (!req.body.serviceDate && !req.body.scheduledDate))
+  {
     res.status(400).send({
       message: "Content can not be empty!",
     });
@@ -19,7 +20,9 @@ exports.createLog = (req, res) => {
     logId: req.body.logId,
     serializedAssetId: req.body.serializedAssetId,
     serviceDate: req.body.serviceDate,
+    scheduledDate: req.body.scheduledDate,
     notes: req.body.notes,
+    description: req.body.description,
     performedBy: req.body.performedBy,
     isPreventative: req.body.isPreventative,
     isRepair: req.body.isRepair,
@@ -118,7 +121,6 @@ exports.getLogById = (req, res) => {
 // Retrieve all Logs with a specific serializedAssetId
 exports.getLogsBySerializedAssetId = (req, res) => {
   const serializedAssetId = req.params.serializedAssetId;
-  console.log("Log controller recieved serializedAssetId: " + serializedAssetId)
 
   Log.findAll({ where: { serializedAssetId: serializedAssetId } })
     .then((data) => {

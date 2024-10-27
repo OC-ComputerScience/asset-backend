@@ -8,9 +8,15 @@ module.exports = (sequelize, Sequelize) => {
         autoIncrement: true,
         allowNull: false,
       },
-      warrantyType: {
+      warrantyDescription: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
+        defaultValue: null
+      },
+      warrantyNotes: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: null,
       },
       startDate: {
         type: Sequelize.DATE,

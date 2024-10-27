@@ -6,8 +6,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new ProfileData
 exports.createProfileData = (req, res) => {
   // Validate request
-  if (!req.body.field || !req.body.profileId) {
-    console.log("Received request body:", req.body);
+  if (!req.body.fieldValueId || !req.body.profileId) {
     res.status(400).send({
       message: `Field and profileId are required`,
     });
@@ -16,8 +15,7 @@ exports.createProfileData = (req, res) => {
 
   // Create a ProfileData
   const profileData = {
-    field: req.body.field,
-    data: req.body.data || null,
+    fieldValueId: req.body.fieldValueId,
     profileId: req.body.profileId,
   };
 
@@ -91,6 +89,10 @@ exports.getProfileDataByProfileId = (req, res) => {
 
   ProfileData.findAll({
     where: { profileId: profileId },
+    include: [{
+      model: db.customFieldValue,
+      include: [db.customField]
+    }]
   })
     .then((data) => {
       if (data.length > 0) {

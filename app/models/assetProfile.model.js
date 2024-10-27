@@ -29,6 +29,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.DATE,
         allowNull: true,
       },
+      warrantyDescription: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       warrantyNotes: {
         type: Sequelize.STRING,
         allowNull: true,
@@ -46,6 +50,14 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: true,
       },
       notes: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      features: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      accessories: {
         type: Sequelize.STRING,
         allowNull: true,
       },

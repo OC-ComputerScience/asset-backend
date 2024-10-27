@@ -1,3 +1,4 @@
+
 module.exports = (app) => {
     const personAsset = require("../controllers/personAsset.controller.js");
     const { authenticate } = require("../authorization/authorization.js");
@@ -8,20 +9,27 @@ module.exports = (app) => {
   
     // Retrieve all PersonAsset
     router.get("/", [authenticate], personAsset.getAllPersonAssets);
-  
-    // Retrieve a single  PersonAsset by  PersonAssetId
-    router.get("/:personAssetId", [authenticate], personAsset.getPersonAssetById);
 
-    /// Retrieve all personAssets with matching serializedAssetId
+    // Retrieve all rencentPersonAsset
+    router.get("/recent", [authenticate], personAsset.getAllRecentPersonAssets);
+
+    //Retrieve all recent asset profiles with categoryId 
+    router.get("/byCategoryId/recent/:categoryId", [authenticate], personAsset.getRecentByCategoryId);
+
+    //Retrieve all asset profiles with categoryId 
+    router.get("/byCategoryId/:categoryId", [authenticate], personAsset.getPersonAssetsByCategoryId);
+ 
+    // Retrieve all personAssets with matching serializedAssetId
     router.get("/bySerializedAsset/:serializedAssetId", [authenticate], personAsset.getPersonAssetsBySerializedAssetId);
 
     // Retrieve all personAssets check-in dates for reminder email
     router.get("/byCheckinDate/reminders", [authenticate], personAsset.getPersonAssetForReminder);
+       
+    // Retrieve a single  PersonAsset by  PersonAssetId
+      router.get("/:personAssetId", [authenticate], personAsset.getPersonAssetById);
 
-    //Retrieve all asset profiles with categoryId 
-    router.get("/byCategoryId/:categoryId", [authenticate], personAsset.getPersonAssetsByCategoryId);
+    router.get("/person/:personId", [authenticate], personAsset.getByPersonId);
 
-  
     // Update a  PersonAsset by  PersonAssetId
     router.put("/:personAssetId", [authenticate], personAsset.updatePersonAsset);
   

@@ -1,8 +1,10 @@
+const { where } = require("sequelize");
 const db = require("../models");
 const AssetCategory = db.assetCategory;
 const AssetType = db.assetType;
 const AssetProfile = db.assetProfile;
 const SerializedAsset = db.serializedAsset;
+const Op = db.Sequelize.Op;
 
 // Create and Save a new SerializedAsset
 exports.createSerializedAsset = (req, res) => {
@@ -56,7 +58,45 @@ exports.createSerializedAsset = (req, res) => {
 
 // Retrieve all SerializedAssets from the database.
 exports.getAllSerializedAssets = (req, res) => {
+  const activeStatus = req.query.activeStatus;
+  const checkoutStatus = req.query.checkoutStatus;
+  let where = {}
+  if(activeStatus) where.activeStatus = (activeStatus === 'true')
+  if(checkoutStatus) where.checkoutStatus = (checkoutStatus === 'true')
   SerializedAsset.findAll({
+    include: [
+      {
+        model: AssetProfile,
+        as: "assetProfile",
+        attributes: [
+          "profileId",
+          "profileName",
+          "typeId",
+          "purchasePrice",
+          "acquisitionDate",
+          "notes",
+          "activeStatus",
+        ],
+      },
+    ],
+    where: where
+  })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while retrieving serialized assets.",
+      });
+    });
+};
+// Retrieve all SerializedAssets from the database for Profile
+exports.getAllSerializedAssetsForProfile = (req, res) => {
+  const profleId = req.params.profileId;
+  SerializedAsset.findAll({
+    where: { profileId: profleId },
     include: [
       {
         model: AssetProfile,
@@ -84,7 +124,6 @@ exports.getAllSerializedAssets = (req, res) => {
       });
     });
 };
-
 // Find a single SerializedAsset with a serializedAssetId
 exports.getSerializedAssetById = (req, res) => {
   const serializedAssetId = req.params.serializedAssetId;
@@ -104,6 +143,11 @@ exports.getSerializedAssetById = (req, res) => {
           "activeStatus",
         ],
       },
+      {
+        model: db.barcode,
+        as: "barcodes",
+        required: false
+      }
     ],
   })
     .then((data) => {
@@ -126,6 +170,8 @@ exports.getSerializedAssetById = (req, res) => {
 
 exports.getSerializedAssetsByCategoryId = (req, res) => {
   const categoryId = req.params.categoryId;
+  const activeStatus = req.query.activeStatus;
+  const checkoutStatus = req.query.checkoutStatus;
 
   SerializedAsset.findAll({
     include: [{
@@ -144,7 +190,9 @@ exports.getSerializedAssetsByCategoryId = (req, res) => {
       }]
     }],
     where: {
-      '$assetProfile.assetType.categoryId$': categoryId
+      '$assetProfile.assetType.categoryId$': categoryId,
+      activeStatus: activeStatus ? activeStatus : [true,false],
+      checkoutStatus: checkoutStatus ? checkoutStatus : [true,false],
     }
   })
   .then((profiles) => {
@@ -163,6 +211,109 @@ exports.getSerializedAssetsByCategoryId = (req, res) => {
   });
 };
 
+exports.searchSerializedAssets = async(req, res) => {
+  const typeId = req.query.typeId;
+  const profileId = req.query.profileId;
+  const searchKey = req.query.searchKey;
+  const activeStatus = req.query.showArchived == 'false' ? true : false;
+  const categoryId = req.query.categoryId;
+  
+  let where = {};
+  let statusCheck = {};
+  let data;
+
+  if(typeId){
+    where.typeId = typeId
+  }
+  if(profileId){
+    where.profileId = profileId
+  }
+  if(activeStatus){
+    statusCheck.activeStatus = true;
+  }
+  
+  try{
+    if(searchKey){
+      data = await findAssetsBySerialNumber(where, searchKey, statusCheck, categoryId);
+      if(data.length < 1){
+        data = await findAssetsByBarcode(where, searchKey, statusCheck, categoryId);
+      } 
+    }
+    else {
+      data = await findAssetsByFilter(where, statusCheck, categoryId);
+    }
+    if(data.length > 0){
+      res.send(data);
+    }
+    else{
+      res.status(404).send({
+        message: "Could not find asset matching any filters"
+      })
+    }
+  }
+  catch(err) {
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving asset(s)"
+    })
+  }
+};
+
+const findAssetsByFilter = async(where, statusCheck, categoryId) => {
+  let category = categoryId ? {categoryId: categoryId} : {}
+  const data = await SerializedAsset.findAll({
+    include: [{
+      model: AssetProfile,
+      where: { [Op.and]: where },
+      include: [{
+        model: AssetType,
+        where: category
+      }]
+    }],
+    where: statusCheck
+  })
+  return data;
+}
+
+const findAssetsBySerialNumber = async(where, searchKey, statusCheck, categoryId) => {
+  let category = categoryId ? {categoryId: categoryId} : {}
+  const data = await SerializedAsset.findAll({
+    include: [{
+      model: AssetProfile,
+      where: { [Op.and]: where },
+      include: [{
+        model: AssetType,
+        where: category
+      }]
+    }],
+    where: [{serialNumber: searchKey}, statusCheck]
+  });
+
+  return data ?? null;
+};
+
+const findAssetsByBarcode = async(where, searchKey, statusCheck, categoryId) => {
+  let category = categoryId ? {categoryId: categoryId} : {}
+  const data = await SerializedAsset.findAll({
+    include: [
+      {
+        model: AssetProfile,
+        where: { [Op.and]: where },
+        include: [{
+          model: AssetType,
+          where: category
+        }]
+      },
+      {
+        model: db.barcode,
+        required: true,
+        where: [{barcode: searchKey}]
+      }
+    ],
+    where: statusCheck
+  });
+  return data;
+};
+
 
 
 
@@ -174,7 +325,8 @@ exports.updateSerializedAsset = (req, res) => {
     where: { serializedAssetId: serializedAssetId },
   })
     .then((num) => {
-      if (num == 1) {
+      console.log(num);
+      if (num[0] == 1) {
         res.status(200).send({
           message: "SerializedAsset was updated successfully.",
         });
@@ -201,7 +353,7 @@ exports.deleteSerializedAsset = (req, res) => {
     where: { serializedAssetId: serializedAssetId },
   })
     .then((num) => {
-      if (num == 1) {
+      if (num[0] == 1) {
         res.status(200).send({
           message: "SerializedAsset was deleted successfully!",
         });

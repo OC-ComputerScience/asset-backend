@@ -1,6 +1,8 @@
 const db = require("../models");
 const authconfig = require("../config/auth.config");
+const UserUserRole = db.userUserRole
 const User = db.user;
+const UserRole = db.userRole;
 const Session = db.session;
 const Op = db.Sequelize.Op;
 
@@ -13,8 +15,6 @@ let googleUser = {};
 const google_id = process.env.CLIENT_ID;
 
 exports.login = async (req, res) => {
-  console.log(req.body);
-
   var googleToken = req.body.credential;
 
   const { OAuth2Client } = require("google-auth-library");
@@ -48,80 +48,27 @@ exports.login = async (req, res) => {
       version: "v2",
     });
     let { data } = await oauth2.userinfo.get(); // get user info
-    console.log(data);
     email = data.email;
     firstName = data.given_name;
     lastName = data.family_name;
   }
 
-  console.log(lastName);
-
   let user = {};
   let session = {};
 
-  await User.findOne({
-    where: {
-      email: email,
-    },
-  })
-    .then((data) => {
-      if (data != null) {
-        user = data.dataValues;
-      } else {
-        // create a new User and save to database
-        user = {
-          fName: firstName,
-          lName: lastName,
-          email: email,
-          userRoleId: data ? data.userRoleId : null,
-          devPermission: false,
-          canAdd: false,
-          canEdit: false,
-          canDelete: false,
-          canArchive: false,
-          canActivate: false,
-          canManageMaintenance: false,
-          canManageWarranties: false,
-          canManageLeases: false,
-        };
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
-    });
-
-  // this lets us get the user id
-  if (user.id === undefined) {
-    console.log("need to get user's id");
-    console.log(user);
-    await User.create(user)
-      .then((data) => {
-        console.log("user was registered");
-        user = data.dataValues;
-        // res.send({ message: "User was registered successfully!" });
-      })
-      .catch((err) => {
-        res.status(500).send({ message: err.message });
-      });
-  } else {
-    console.log(user);
-    // doing this to ensure that the user's name is the one listed with Google
-    user.fName = firstName;
-    user.lName = lastName;
-    console.log(user);
-    await User.update(user, { where: { id: user.id } })
-      .then((num) => {
-        if (num == 1) {
-          console.log("updated user's name");
-        } else {
-          console.log(
-            `Cannot update User with id=${user.id}. Maybe User was not found or req.body is empty!`
-          );
-        }
-      })
-      .catch((err) => {
-        console.log("Error updating User with id=" + user.id + " " + err);
-      });
+  try{
+    user = await getUser(email)
+    if(user.id === undefined) {
+      user = await createUser(email, firstName, lastName)
+    }
+    else if(user.fName !== firstName || user.lName !== lastName){
+      let updatedUser = await updateUser(firstName, lastName, user)
+      user.firstName = updatedUser.firstName
+      user.lastName = updatedUser.lastName
+    }
+  }
+  catch(err){
+    res.status(500).send({message: err.message})
   }
 
   // try to find session first
@@ -159,20 +106,9 @@ exports.login = async (req, res) => {
           session = {};
         } else {
           // if the session is still valid, then send info to the front end
-          let userInfo = {
-            email: user.email,
-            fName: user.fName,
-            lName: user.lName,
-            fullName: user.fullName,
-            userId: user.id,
-            userRoleId: user.userRoleId,
-            token: session.token,
-            // refresh_token: user.refresh_token,
-            // expiration_date: user.expiration_date
-          };
-          console.log("found a session, don't need to make another one");
-          console.log(userInfo);
-          res.send(userInfo);
+          user.userId = user.id;
+          user.token = session.token;
+          res.send(user);
         }
       }
     })
@@ -197,33 +133,11 @@ exports.login = async (req, res) => {
       expirationDate: tempExpirationDate,
     };
 
-    console.log("making a new session");
-    console.log(session);
-
     await Session.create(session)
       .then(() => {
-        let userInfo = {
-          email: user.email,
-          fName: user.fName,
-          lName: user.lName,
-          fullName: user.fullName,
-          userId: user.id,
-          userRoleId: user.userRoleId,
-          devPermission: user.devPermission,
-          canAdd: user.canAdd,
-          canEdit: user.canEdit,
-          canDelete: user.canDelete,
-          canArchive: user.canArchive,
-          canActivate: user.canActivate,
-          canManageMaintenance: user.canManageMaintenance,
-          canManageWarranties: user.canManageWarranties,
-          canManageLeases: user.canManageLeases,
-          token: token,
-          // refresh_token: user.refresh_token,
-          // expiration_date: user.expiration_date
-        };
-        console.log(userInfo);
-        res.send(userInfo);
+        user.token = token;
+        user.userId = user.id;
+        res.send(user);
       })
       .catch((err) => {
         res.status(500).send({ message: err.message });
@@ -231,21 +145,121 @@ exports.login = async (req, res) => {
   }
 };
 
+async function getUser(email) {
+  const data = await User.findOne({
+    where: { email: email }
+  })
+  let user = data.dataValues
+  if(data != null){
+    let roles = await getUserRoles(user)
+    let activeRole = {}
+    roles.forEach((role) => {
+      if(role.dataValues.active) {
+        activeRole = role.dataValues.userRole
+      }
+    })
+    user.roles = roles
+    user.canAdd = activeRole.canAdd
+    user.canEdit = activeRole.canEdit
+    user.canArchive = activeRole.canArchive
+    user.canActivate = activeRole.canActivate
+    user.canDelete = activeRole.canDelete
+    user.viewCheckOutIn = activeRole.viewCheckOutIn
+    user.viewServices = activeRole.viewServices
+    user.viewMaintenance = activeRole.viewMaintenance
+    user.viewWarranties = activeRole.viewWarranties
+    user.viewLeases = activeRole.viewLeases
+    user.viewReports = activeRole.viewReports
+    user.viewManage = activeRole.viewManage
+    user.viewAssets = activeRole.viewAssets
+    user.viewFacilities = activeRole.viewFacilities
+    user.viewPeople = activeRole.viewPeople
+    user.viewUsers = activeRole.viewUsers
+    user.isAdmin = activeRole.isAdmin
+    user.isWorker = activeRole.isWorker
+    user.isManager = activeRole.isManager
+    user.isUnassigned = activeRole.isUnassigned
+    user.categoryId = activeRole.categoryId
+    user.userRoleId = activeRole.id
+  }
+  
+  return user
+} 
+
+
+async function getUserRoles(user) {
+  const data = await UserUserRole.findAll({
+    where: {userId: user.id},
+    include: [{model: UserRole}],
+  })
+  return data
+}
+
+async function createUser(email, firstName, lastName) {
+  let user = {
+    fName: firstName,
+    lName: lastName,
+    email: email,
+    userRoleId: 2,
+    devPermission: false
+  }
+
+  const data = await User.create(user)
+  user = data.dataValues
+  user.canAdd = false
+  user.canEdit = false
+  user.canArchive = false
+  user.canActivate = false
+  user.canDelete = false
+  user.viewCheckOutIn = false
+  user.viewServices = false
+  user.viewMaintenance = false
+  user.viewWarranties = false
+  user.viewLeases = false
+  user.viewReports = false
+  user.viewManage = false
+  user.viewAssets = false
+  user.viewFacilities = false
+  user.viewPeople = false
+  user.viewUsers = false
+  user.isAdmin = false
+  user.isManager = false
+  user.isWorker = false
+  user.isUnassigned = true
+
+  const role = {
+    userId: user.id,
+    userRoleId: 2,
+    active: 1
+  }
+  let newRole = await UserUserRole.create(role)
+  user.roles = [newRole.dataValues]
+
+  return user
+}
+
+async function updateUser(firstName, lastName, user) {
+  let updateData = {
+    fName: firstName,
+    lName: lastName
+  }
+  let data = await User.update(updateData, { where: { id: user.id } })
+  return data.dataValues
+}
+
+
 exports.authorize = async (req, res) => {
-  console.log("authorize client");
   const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
     "postmessage"
   );
 
-  console.log("authorize token");
   // Get access and refresh tokens (if access_type is offline)
   let { tokens } = await oauth2Client.getToken(req.body.code);
   oauth2Client.setCredentials(tokens);
 
   let user = {};
-  console.log("findUser");
 
   await User.findOne({
     where: {
@@ -261,8 +275,6 @@ exports.authorize = async (req, res) => {
       res.status(500).send({ message: err.message });
       return;
     });
-  console.log("user");
-  console.log(user);
   user.refresh_token = tokens.refresh_token;
   let tempExpirationDate = new Date();
   tempExpirationDate.setDate(tempExpirationDate.getDate() + 100);
@@ -281,19 +293,13 @@ exports.authorize = async (req, res) => {
         refresh_token: user.refresh_token,
         expiration_date: user.expiration_date,
       };
-      console.log(userInfo);
-      res.send(userInfo);
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
-
-  console.log(tokens);
-  console.log(oauth2Client);
 };
 
 exports.logout = async (req, res) => {
-  console.log(req.body);
   if (req.body === null) {
     res.send({
       message: "User has already been successfully logged out!",

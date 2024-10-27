@@ -6,13 +6,12 @@ const Op = db.Sequelize.Op;
 
 // Create and Save a new Warranty
 exports.createWarranty = (req, res) => {
-  console.log(req.body)
+
   // Validate request
   if (
-    !req.body.warrantyType ||
+    !req.body.warrantyDescription ||
     !req.body.startDate ||
     !req.body.endDate ||
-    !req.body.length ||
     !req.body.serializedAssetId
   ) {
     res.status(400).send({
@@ -23,8 +22,9 @@ exports.createWarranty = (req, res) => {
 
   // Create a Warranty
   const warranty = {
-    warrantyId: req.body.warrantyId,
-    warrantyType: req.body.warrantyType,
+
+    warrantyDescription: req.body.warrantyDescription,
+    warrantyNotes: req.body.warrantyNotes,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     length: req.body.length,

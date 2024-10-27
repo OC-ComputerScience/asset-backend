@@ -1,6 +1,9 @@
 const db = require("../models");
 const Person = db.person;
+const Room = db.room;
+const Building = db.building;
 const Op = db.Sequelize.Op;
+const axios = require('axios'); 
 
 // Create and Save a new Person
 exports.createPerson = (req, res) => {
@@ -24,6 +27,7 @@ exports.createPerson = (req, res) => {
     lName: req.body.lName,
     email: req.body.email,
     idNumber: req.body.idNumber,
+    roomId: req.body.roomId,
     activeStatus: req.body.activeStatus,
   };
 
@@ -42,7 +46,17 @@ exports.createPerson = (req, res) => {
 
 // Retrieve all Persons from the database.
 exports.getAllPersons = (req, res) => {
-  Person.findAll()
+  Person.findAll(
+    {
+      include: [
+        {
+          model: Room ,
+          include : [{model: Building}]
+        },
+      ],
+    }
+
+  )
     .then((data) => {
       res.status(200).json(data);
     })
@@ -53,11 +67,59 @@ exports.getAllPersons = (req, res) => {
     });
 };
 
+// Find a single OCPerson with a personId
+exports.getOCPersonById = (req, res) => {
+  const personId = req.params.personId;
+
+
+  axios.get('http://stingray.oc.edu/api/assetmanagementuserprofile/'+ personId)
+    .then(function (response) {
+      // handle success
+
+      res.status(200).json(response.data);
+    })
+    .catch(function (error) {
+      res.status(500).send({
+        message: "Error retrieving Person with personId=" + personId,
+      });
+    })
+
+};
+
+// Find a single OCPerson with a email
+exports.getOCPersonByEmail = (req, res) => {
+  const email = req.params.email;
+
+
+  axios.get('http://stingray.oc.edu/api/assetmanagementuserprofile/'+ email)
+    .then(function (response) {
+      // handle success
+
+      res.status(200).json(response.data);
+    })
+    .catch(function (error) {
+      res.status(404).send({
+        message: "Error retrieving Person with email=" + email,
+      });
+    })
+
+};
+
+
 // Find a single Person with a personId
 exports.getPersonById = (req, res) => {
   const personId = req.params.personId;
 
-  Person.findByPk(personId)
+  Person.findByPk(personId,
+    {
+      include: [
+        {
+          model: Room,
+          include : [{model: Building}]
+        },
+      ],
+    }
+  )
     .then((data) => {
       if (data) {
         res.status(200).json(data);

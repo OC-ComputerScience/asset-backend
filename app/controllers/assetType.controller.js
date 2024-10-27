@@ -18,14 +18,13 @@ exports.createAssetType = (req, res) => {
     typeName: req.body.typeName,
     desc: req.body.desc,
     categoryId: req.body.categoryId,
-    activeStatus: req.body.activeStatus,
-    dynamicFields: req.body.dynamicFields,
+    activeStatus: 1,
   };
 
   // Save AssetType in the database
   AssetType.create(assetType)
     .then((data) => {
-      res.status(201).json(data);
+      res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
@@ -65,9 +64,15 @@ exports.getAssetTypeById = (req, res) => {
     include: [
       {
         model: AssetCategory,
-        as: "assetCategory", // Ensure this alias matches the one defined in your associations
-        attributes: ["categoryId", "categoryName", "desc"], // Adjust attributes as needed
+        as: "assetCategory", 
+        attributes: ["categoryId", "categoryName", "desc"], 
       },
+      {
+        model: db.customFieldType,
+        required: true,
+        where: {typeId: typeId},
+        include: [db.customField],
+      }
     ],
   })
     .then((data) => {
@@ -195,7 +200,6 @@ exports.bulkCreateAssetType = (req, res) => {
     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
     const hexToUtf8 = convert("hex", "utf8");
     let tsvData = hexToUtf8(tsvFile.data).split("\r\n");
-    console.log(tsvData);
     let tsvRows = [];
     tsvData.forEach((data) => {
       tsvRows.push(data.split(","));
@@ -227,7 +231,6 @@ exports.bulkCreateAssetType = (req, res) => {
 
   const tsvFile = req.files.file;
   data = convert(tsvFile); // pass tsv file to be converted
-  console.log(data);
 
   AssetType.bulkCreate(data)
     .then((types) => {

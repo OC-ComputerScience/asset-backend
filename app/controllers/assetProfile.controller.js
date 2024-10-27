@@ -18,20 +18,24 @@ exports.createAssetProfile = (req, res) => {
     profileName: req.body.profileName,
     typeId: req.body.typeId,
     purchasePrice: req.body.purchasePrice,
-    acquisitionDate: req.body.acquisitionDate,
-    activeStatus: req.body.activeStatus,
+    acquisitionDate: new Date(req.body.acquisitionDate),
+    activeStatus: 1,
     notes: req.body.notes,
     warrantyStartDate: req.body.warrantyStartDate,
     warrantyEndDate: req.body.warrantyEndDate,
+    warrantyDescription: req.body.warrantyDescription,
     warrantyNotes: req.body.warrantyNotes,
+    features: req.body.features,
+    accessories: req.body.accessories,
   };
 
   // Save AssetProfile in the database
   AssetProfile.create(assetProfile)
     .then((data) => {
-      res.status(201).json(data);
+      res.send(data);
     })
     .catch((err) => {
+
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the AssetProfile.",
@@ -81,8 +85,18 @@ exports.getAssetProfileById = (req, res) => {
           "typeName",
           "categoryId",
           "desc",
-          "dynamicFields",
+         
         ],
+      },
+      {
+        model: db.profileData,
+        required: false,
+        include: [ 
+          {
+            model: db.customFieldValue,
+            include: [db.customField]
+          },
+       ]
       },
     ],
   })
@@ -101,6 +115,21 @@ exports.getAssetProfileById = (req, res) => {
       });
     });
 };
+
+exports.getAllForType = async(req, res) => {
+  const typeId = req.params.typeId;
+  try{
+    const data = await AssetProfile.findAll({
+      where: {typeId: typeId}
+    });
+    res.send(data);
+  }
+  catch(err){
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving asset profiles with type id=" + typeId
+    });
+  }
+}
 
 //get profiles by their respective types categoryId
 exports.getProfilesByCategoryId = (req, res) => {
@@ -218,7 +247,7 @@ exports.bulkCreateAssetProfile = (req, res) => {
     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
     const hexToUtf8 = convert("hex", "utf8");
     let tsvData = hexToUtf8(tsvFile.data).split("\r\n");
-    console.log(tsvData);
+  
     let tsvRows = [];
     tsvData.forEach((data) => {
       tsvRows.push(data.split("\t"));
@@ -250,7 +279,7 @@ exports.bulkCreateAssetProfile = (req, res) => {
 
   const tsvFile = req.files.file;
   data = convert(tsvFile); // pass tsv file to be converted
-  console.log(data);
+
 
   AssetProfile.bulkCreate(data)
     .then((profiles) => {
