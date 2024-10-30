@@ -43,7 +43,7 @@ jobs:
           local: deploy/
           remote: c:/nodeapps/asset-backend
           recursive: true
-          host: "assetdev.oc.edu"
+          host: "asset.oc.edu"
           username: "david.north"
           privateKey: ${{ secrets.PROD_WIN_SERVER_SSH_KEY  }}
           password: ${{ secrets.PASSWORD }}
