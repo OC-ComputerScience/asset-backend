@@ -69,6 +69,7 @@ exports.login = async (req, res) => {
   }
   catch(err){
     res.status(500).send({message: err.message})
+    return
   }
 
   // try to find session first
@@ -149,8 +150,9 @@ async function getUser(email) {
   const data = await User.findOne({
     where: { email: email }
   })
-  let user = data.dataValues
+  let user = {}
   if(data != null){
+    user = data.dataValues
     let roles = await getUserRoles(user)
     let activeRole = {}
     roles.forEach((role) => {
@@ -182,7 +184,6 @@ async function getUser(email) {
     user.categoryId = activeRole.categoryId
     user.userRoleId = activeRole.id
   }
-  
   return user
 } 
 

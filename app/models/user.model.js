@@ -26,15 +26,6 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         unique: true, // Ensure email is unique across all records
       },
-      userRoleId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "userRole",
-          key: "id",
-        },
-        allowNull: true, // Allow null on user role deletion
-        defaultValue: 2,
-      },
       devPermission: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
