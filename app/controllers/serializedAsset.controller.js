@@ -77,6 +77,11 @@ exports.getAllSerializedAssets = (req, res) => {
           "notes",
           "activeStatus",
         ],
+        include: [{
+          model: AssetType,
+          as: "assetType",
+          include: [AssetCategory]
+        }]
       },
     ],
     where: where
@@ -168,47 +173,43 @@ exports.getSerializedAssetById = (req, res) => {
     });
 };
 
-exports.getSerializedAssetsByCategoryId = (req, res) => {
+exports.getSerializedAssetsByCategoryId = async(req, res) => {
   const categoryId = req.params.categoryId;
   const activeStatus = req.query.activeStatus;
   const checkoutStatus = req.query.checkoutStatus;
+  let where = {}
+  if(activeStatus) where.activeStatus = (activeStatus === 'true')
+  if(checkoutStatus) where.checkoutStatus = (checkoutStatus === 'true')
 
-  SerializedAsset.findAll({
-    include: [{
-      model: AssetProfile,
-      as: 'assetProfile',
+  try{
+    const data = await SerializedAsset.findAll({
       include: [{
-        model: AssetType,
-        as: 'assetType',
-        where: { categoryId: categoryId },
-        attributes: ['typeId'],
+        model: AssetProfile,
+        as: 'assetProfile',
+        required: true,
         include: [{
-          model: AssetCategory,
-          as: 'assetCategory',
-          attributes: ['categoryId', 'categoryName', 'desc']
+          model: AssetType,
+          as: 'assetType',
+          attributes: ['typeId', 'categoryId'],
+          where: {categoryId: categoryId},
+          required: true
         }]
-      }]
-    }],
-    where: {
-      '$assetProfile.assetType.categoryId$': categoryId,
-      activeStatus: activeStatus ? activeStatus : [true,false],
-      checkoutStatus: checkoutStatus ? checkoutStatus : [true,false],
-    }
-  })
-  .then((profiles) => {
-    if (profiles.length > 0) {
-      res.status(200).json(profiles);
-    } else {
+      }],
+      where: where
+    })
+    if(data.length > 0){
+      res.status(200).json(data);
+    }else {
       res.status(404).send({
         message: `No AssetProfiles found for categoryId=${categoryId}.`
       });
     }
-  })
-  .catch((err) => {
+  }
+  catch(err){
     res.status(500).send({
       message: err.message || "Some error occurred while retrieving AssetProfiles by category.",
     });
-  });
+  }
 };
 
 exports.searchSerializedAssets = async(req, res) => {
@@ -325,7 +326,6 @@ exports.updateSerializedAsset = (req, res) => {
     where: { serializedAssetId: serializedAssetId },
   })
     .then((num) => {
-      console.log(num);
       if (num[0] == 1) {
         res.status(200).send({
           message: "SerializedAsset was updated successfully.",
