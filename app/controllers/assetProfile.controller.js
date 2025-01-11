@@ -94,7 +94,9 @@ exports.getAssetProfileById = (req, res) => {
         include: [ 
           {
             model: db.customFieldValue,
-            include: [db.customField]
+            include: [
+              { model: db.customField, include: [db.customFieldType]}
+            ]
           },
        ]
       },
