@@ -179,7 +179,7 @@ exports.updateAssetProfile = (req, res) => {
     where: { profileId: profileId },
   })
     .then((num) => {
-      if (num == 1) {
+      if (num == 1 || num == 0) {
         res.status(200).send({
           message: "AssetProfile was updated successfully.",
         });
